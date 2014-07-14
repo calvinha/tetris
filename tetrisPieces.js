@@ -1,11 +1,12 @@
 
 var ROWS = 20;
 var COLUMNS = 10;
-var COLORS = ["red", "blue", "green", "yellow", "purple", "skyblue", "springgreen"];
+var COLORS = ["red", "blue", "green", "plum", "purple", "skyblue", "springgreen"];
 function Point(x, y){
     this.x = x || 0;
     this.y = y || 0;
-
+    this.moveDown = 1;
+    
     Point.prototype.x = null;
     Point.prototype.y = null;
     
@@ -43,8 +44,14 @@ function Point(x, y){
         this.y -= 1;
     };
     Point.prototype.addX = function(){
-        this.x += 1;
+        this.x += this.moveDown;
     };
+    Point.prototype.addRight = function(amount){
+        this.y += amount;
+    };
+    Point.prototype.stop = function(){
+        this.x = ROWS-1;
+    }
 
 };
 
@@ -52,7 +59,6 @@ function TetrisPiece (colorIndex, pivot){
     this.colorIndex = colorIndex;
     this.pivot = pivot
     this.pointsArray = [];
-
     this.counterClockArray = [[0, 1],[-1, 0]];
     
     TetrisPiece.prototype.move = function(direction){
@@ -74,7 +80,10 @@ function TetrisPiece (colorIndex, pivot){
                 break;
             default:
                 point.addX();
+
             }
+            
+
             //To change the pivot once
             if(this.pivot != undefined && tempPoint.equals(this.pivot) && !changedPivot){
                 this.pivot =  point.clone();
@@ -113,6 +122,7 @@ function TetrisPiece (colorIndex, pivot){
         return this.pivot;
     };
 
+
     TetrisPiece.prototype.getColorIndex = function(){
         return this.colorIndex;
     };
@@ -140,6 +150,15 @@ function TetrisPiece (colorIndex, pivot){
         } 
     };
 
+    TetrisPiece.prototype.setStartPosition = function(){
+        var amountToShift = (COLUMNS-this.pointsArray.length)/2
+        for (var i = 0; i < this.pointsArray.length; i++){
+            var point = this.pointsArray[i]; //shallow copy;
+            point.addRight(amountToShift);
+        }
+        this.pivot.addRight(amountToShift);
+    };
+
     TetrisPiece.prototype.getStructure = function(){
         return this.piece;
     };
@@ -149,6 +168,8 @@ function TetrisPiece (colorIndex, pivot){
             document.write(this.pointsArray[i] + " ");
         }
     };
+
+
 };
          
 
@@ -279,22 +300,14 @@ function TetrisBoard (){
 
     TetrisBoard.prototype.positionPiece = function(piece){
 
-        var pointsList = piece.getPointsArray();
-        
-        // for(var i = 0; i < ROWS; i++){
-        //     for(var j = 0; j < COLUMNS; j++){
-        //         var validLocation = this.board[i][j] < 0 ;
-        //         if(validLocation){
-        //             this.board[i][j] = -1;
-        //         }
-        //     }
-        // }
+        var pointsList = piece.getPointsArray();        
 
         for(var i = 0; i < pointsList.length; i++){
             var tempPoint = pointsList[i];    
             var x = tempPoint.getX();
-            var y = tempPoint.getY();           
-            this.board[x][y] = piece.getColorIndex();        
+
+            var y = tempPoint.getY();
+            this.board[x][y] = piece.getColorIndex();
         }
         
     };
@@ -313,6 +326,9 @@ function TetrisBoard (){
     TetrisBoard.prototype.getBoard = function(){
         return this.board;
     };
-    
+
+    TetrisBoard.prototype.movePieceDown = function(){
+        
+    };
     
 };

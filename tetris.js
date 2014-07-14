@@ -1,36 +1,21 @@
 
+//http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext('2d');
 
 var WIDTH = canvas.width
 var HEIGHT = canvas.height
+var fps = 30;
+var LEFT = 37;
+var RIGHT = 39;
+var DOWN = 40;
+var UP = 38;
 
-var RunGame = (function(){
-
-    function runGame(){
-        
-    };
-
-    runGame.prototype = {
-        constructor: runGame  
-    };
-
-    runGame.prototype.render = function(){
-        var thisObject = this;
-        requestAnimationFrame(function() {thisObject.render();});
-        boardView.displayBoard();
-    };
-
-    return {
-        runGame:runGame
-    };
-   
-    
-}());
 
 function BoardView(model){
     this.model = model;
-    this.boxSize = WIDTH/COLUMNS;
+    this.boxSizeX = WIDTH/COLUMNS;
+    this.boxSizeY = HEIGHT/ROWS;
 
 
 
@@ -46,18 +31,18 @@ function BoardView(model){
         
         
         for(var i = 0; i < board.length; i++){
-            for(var j = 0; j < board[0].length; j++){
+            for(var j = 0; j < board[0].length; j++){             
                 var value = board[i][j];
                 if(value >= 0){
                     this.drawSquare(x,y,value);
                 }
                 else{
-                    ctx.fillStyle = "FFFFFF";
-                    ctx.fillRect(x, y, this.boxSize, this.boxSize);
+                    ctx.fillStyle = "#FFFFFF";
+                    ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY );
                 }
-                x += this.boxSize;
+                x += this.boxSizeY;
             }
-            y += this.boxSize;
+            y += this.boxSizeY;
             x = 0;
         }
     };
@@ -71,31 +56,78 @@ function BoardView(model){
         // ctx.strokeStyle = 'black';
         // ctx.stroke();
         ctx.fillStyle = COLORS[colorIndex];
-        ctx.fillRect(x, y, this.boxSize, this.boxSize);
+        ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY);
     };
     
 };
 
-function render(){
-    setTimeout(function(){
-        requestAnimationFrame(render);
-        board.erasePath(piece);
-        piece.move("down");
-        piece.rotateCounterClock();
-        board.positionPiece(piece);
-        boardView.displayBoard();
-    }, 10000/60);
-    
+/*Looks for user arrow key inputs*/
+function keyListener(keyevent){
+    board.erasePath(piece);
+    switch(keyevent.keyCode){
+    case LEFT:
+        piece.move("left");break;
+    case RIGHT:
+        piece.move("right"); break;
+    case UP:
+        piece.rotateCounterClock(); break;
+    case DOWN:
+        piece.move("down");break;
+    }
+    board.positionPiece(piece);
 };
 
 
-var game = new RunGame.runGame();
-//game.render();
+var gameStepTime = 1000;
+var cumulatedTime = 0;
+var frameTime = 0;
+var lastFrameTime = Date.now();
+
+
+function render(){
+    
+
+        requestAnimationFrame(render);
+        var time = Date.now();    
+        frameTime = time - lastFrameTime;
+        lastFrameTime = time;
+        cumulatedTime += frameTime;
+
+        while(cumulatedTime > gameStepTime ){
+            updatePiece();
+            cumulatedTime -= gameStepTime;
+        }
+        boardView.displayBoard();      
+};
+
+
+function updatePiece(){
+    board.erasePath(piece);
+    piece.move("down");
+    board.positionPiece(piece);
+}
+function draw(){
+    document.write("hello");
+    document.write("<br>");
+    document.write("<br>");
+    id = setTimeout(draw, 2000);    
+}
+
+
+
+
+
+
+
 var board = new TetrisBoard();
 var piece = new T_PIECE();
 var boardView = new BoardView(board);
-
+piece.setStartPosition();
+//board.positionPiece(piece);
+document.addEventListener('keydown', keyListener);
+//setInterval(render, 500);
 render();
+//draw();
 
 
 // piece.getPointsArray();
