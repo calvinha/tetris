@@ -110,6 +110,7 @@ function updatePiece(){
 var board = new TetrisBoard();
 var piece = new L_PIECE();
 var boardView = new BoardView(board);
+
 piece.setStartPosition();
 board.positionPiece(piece);
 boardView.displayBoard();

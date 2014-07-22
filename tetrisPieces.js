@@ -109,18 +109,40 @@ function TetrisPiece (colorIndex, pivot){
             return;
         }
 
+        var tempArray = [];
+        
         for(var i = 0; i < this.pointsArray.length; i++){
-            var point = this.pointsArray[i]; //shallow copy
-            if(!point.equals(this.pivot)){
-                var pointResult = this.pivot.subtract(point);
+            var tempPoint = this.pointsArray[i].clone(); //shallow copy
+            if(!tempPoint.equals(this.pivot)){
+                var pointResult = this.pivot.subtract(tempPoint);
 
                 var x = matrix[0][0]*pointResult.getX() + matrix[0][1]*pointResult.getY();
                 var y = matrix[1][0]*pointResult.getX() + matrix[1][1]*pointResult.getY();
                 var pointTransformed = new Point(x, y);
-                this.pointsArray[i] = this.pivot.add(pointTransformed);
+                var newPoint = this.pivot.add(pointTransformed);
+
+                if(this.isInBounds(newPoint)){
+                    tempArray.push(newPoint);
+                }
+                else
+                    return;
 
             }
         }
+
+        var pointsArrayIndex = 0;
+
+        for(var i = 0; i < tempArray.length; i++){
+            var point = this.pointsArray[pointsArrayIndex];
+            var otherPoint = tempArray[i];
+            if(!point.equals(this.pivot)){
+                this.pointsArray[pointsArrayIndex] = otherPoint;
+            }
+            else{//post-increment to skip the pivot but still update the next point
+                this.pointsArray[++pointsArrayIndex] = otherPoint;
+            }
+            pointsArrayIndex++;              
+        }               
     };
 
     TetrisPiece.prototype.updatePoints = function(array){
@@ -132,6 +154,7 @@ function TetrisPiece (colorIndex, pivot){
     TetrisPiece.prototype.isInBounds = function(point){
         return point.getY() >= 0 && point.getY() < COLUMNS && point.getX() < ROWS;
     };
+
     
     TetrisPiece.prototype.addPoint = function(point){
         this.pointsArray.push(point);
