@@ -60,36 +60,46 @@ function TetrisPiece (colorIndex, pivot){
     this.pivot = pivot
     this.pointsArray = [];
     this.counterClockArray = [[0, 1],[-1, 0]];
-    
-    TetrisPiece.prototype.move = function(direction){
-        
-        var changedPivot = false;
-        for(var i = 0; i < this.pointsArray.length; i++){
-            var point = this.pointsArray[i]; //shallow copy 
-            var tempPoint = point.clone(); //deep copy 
 
-            // document.write("pivot = " + this.pivot);
-            // document.write("<br>");
+    
+    //To move the tetris piece
+    //This function also checks if the move is valid
+    TetrisPiece.prototype.move = function(direction){
+
+        var tempArray = [];
+        var changedPivot = false;
+        var tempPivot;
+        
+        for(var i = 0; i < this.pointsArray.length; i++){
+            var tempPoint = this.pointsArray[i].clone(); //deep copy 
+            var pastPoint = tempPoint.clone(); 
 
             switch (direction){
             case "left":
-                point.subtractY();
-                break;
+                tempPoint.subtractY(); break;
             case "right":
-                point.addY();
-                break;
+                tempPoint.addY(); break;
             default:
-                point.addX();
-
+                tempPoint.addX();
             }
             
-
-            //To change the pivot once
-            if(this.pivot != undefined && tempPoint.equals(this.pivot) && !changedPivot){
-                this.pivot =  point.clone();
-                changedPivot = true;
+            //If the movement is invalid don't update the points 
+            if(!this.isInBounds(tempPoint)){
+                return;
             }
-        }          
+            
+            tempArray.push(tempPoint);
+
+            //To store the correct pivot for change at the end 
+            if(this.pivot != undefined && pastPoint.equals(this.pivot) && !changedPivot){
+                changedPivot = true;
+                tempPivot = tempPoint;
+            }
+        }
+
+        //update all the points for the tetris piece
+        this.updatePoints(tempArray);
+        this.pivot = tempPivot; //change the pivot        
     }
     
     TetrisPiece.prototype.rotateCounterClock = function(){
@@ -99,9 +109,8 @@ function TetrisPiece (colorIndex, pivot){
             return;
         }
 
-
         for(var i = 0; i < this.pointsArray.length; i++){
-            var point = this.pointsArray[i];
+            var point = this.pointsArray[i]; //shallow copy
             if(!point.equals(this.pivot)){
                 var pointResult = this.pivot.subtract(point);
 
@@ -114,6 +123,16 @@ function TetrisPiece (colorIndex, pivot){
         }
     };
 
+    TetrisPiece.prototype.updatePoints = function(array){
+        for(var i = 0; i < array.length; i++){
+            this.pointsArray[i] = array[i];
+        }
+    };
+
+    TetrisPiece.prototype.isInBounds = function(point){
+        return point.getY() >= 0 && point.getY() < COLUMNS && point.getX() < ROWS;
+    };
+    
     TetrisPiece.prototype.addPoint = function(point){
         this.pointsArray.push(point);
     };
@@ -134,6 +153,7 @@ function TetrisPiece (colorIndex, pivot){
     TetrisPiece.prototype.getCounterClock = function(){
         return this.counterClockArray;
     };
+
     
     //Add all the points to the pointsArray for movement later
     TetrisPiece.prototype.addAllPoints = function(){
@@ -141,7 +161,7 @@ function TetrisPiece (colorIndex, pivot){
         for(var i = 0; i < this.piece.length; i++){
             for(var j = 0; j < this.piece[0].length; j++){
                 var temp = new Point(i, j);
-                var isValidPoint = this.piece[i][j] == 1;
+                var isValidPoint = this.piece[i][j] == 1; //boolean
                 
                 if( isValidPoint){                
                     this.addPoint(temp);
@@ -150,6 +170,7 @@ function TetrisPiece (colorIndex, pivot){
         } 
     };
 
+    //Sets the start position for any tetris piece so it starts in the middle
     TetrisPiece.prototype.setStartPosition = function(){
         var amountToShift = (COLUMNS-this.pointsArray.length)/2
         for (var i = 0; i < this.pointsArray.length; i++){
@@ -269,6 +290,7 @@ function O_PIECE(){
         return "O Piece";
     };
 };
+
 
 function TetrisBoard (){
 

@@ -70,7 +70,7 @@ function keyListener(keyevent){
     case RIGHT:
         piece.move("right"); break;
     case UP:
-        piece.rotateCounterClock(); break;
+        piece.rotateCounterClock(); break;       
     case DOWN:
        piece.move("down");break;
     }
@@ -83,7 +83,7 @@ var cumulatedTime = 0;
 var frameTime = 0;
 var lastFrameTime = Date.now();
 
-
+//http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 function render(){
     
 
