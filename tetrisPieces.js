@@ -156,7 +156,9 @@ function TetrisPiece (colorIndex, pivot){
             var point = this.pointsArray[i]; //shallow copy;
             point.addRight(amountToShift);
         }
-        this.pivot.addRight(amountToShift);
+        if(this.pivot != undefined){ // the O_Piece does not have a pivot
+            this.pivot.addRight(amountToShift);
+        }
     };
 
     TetrisPiece.prototype.getStructure = function(){

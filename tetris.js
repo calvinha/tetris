@@ -48,15 +48,15 @@ function BoardView(model){
     };
 
     BoardView.prototype.drawSquare = function(x, y, colorIndex){
-        // ctx.beginPath();
-        // ctx.rect(x, y, this.boxSize, this.boxSize);
-        // ctx.fillStyle = COLORS[colorIndex];
-        // ctx.fill();
-        // ctx.lineWidth = 2;
-        // ctx.strokeStyle = 'black';
-        // ctx.stroke();
+        ctx.beginPath();
+        ctx.rect(x, y, this.boxSizeY, this.boxSizeY);
         ctx.fillStyle = COLORS[colorIndex];
-        ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY);
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
+        // ctx.fillStyle = COLORS[colorIndex];
+        // ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY);
     };
     
 };
@@ -72,13 +72,13 @@ function keyListener(keyevent){
     case UP:
         piece.rotateCounterClock(); break;
     case DOWN:
-        piece.move("down");break;
+       piece.move("down");break;
     }
     board.positionPiece(piece);
 };
 
 
-var gameStepTime = 1000;
+var gameStepTime = 500;
 var cumulatedTime = 0;
 var frameTime = 0;
 var lastFrameTime = Date.now();
@@ -106,28 +106,16 @@ function updatePiece(){
     piece.move("down");
     board.positionPiece(piece);
 }
-function draw(){
-    document.write("hello");
-    document.write("<br>");
-    document.write("<br>");
-    id = setTimeout(draw, 2000);    
-}
-
-
-
-
-
-
 
 var board = new TetrisBoard();
-var piece = new T_PIECE();
+var piece = new L_PIECE();
 var boardView = new BoardView(board);
 piece.setStartPosition();
-//board.positionPiece(piece);
+board.positionPiece(piece);
+boardView.displayBoard();
 document.addEventListener('keydown', keyListener);
-//setInterval(render, 500);
 render();
-//draw();
+
 
 
 // piece.getPointsArray();
