@@ -5,26 +5,28 @@ var ctx = canvas.getContext('2d');
 
 var WIDTH = canvas.width
 var HEIGHT = canvas.height
+
 var fps = 30;
+
 var LEFT = 37;
 var RIGHT = 39;
 var DOWN = 40;
 var UP = 38;
 
+var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE];
 
 function BoardView(model){
+    
     this.model = model;
     this.boxSizeX = WIDTH/COLUMNS;
     this.boxSizeY = HEIGHT/ROWS;
 
-
-
     BoardView.prototype.toString = function(){
         return "Board View";
     };
-
     
     BoardView.prototype.displayBoard = function(){
+        
         var board = this.model.getBoard();
         var x = 0;
         var y = 0;
@@ -61,20 +63,27 @@ function BoardView(model){
     
 };
 
+
+                
 /*Looks for user arrow key inputs*/
+               
 function keyListener(keyevent){
-    board.erasePath(piece);
+    
+    model.erasePath(piece);
+    var board = model.getBoard();   
+
     switch(keyevent.keyCode){
     case LEFT:
-        piece.move("left");break;
+        piece.move("left", board); break;
     case RIGHT:
-        piece.move("right"); break;
+        piece.move("right", board); break;
     case UP:
         piece.rotateCounterClock(); break;       
     case DOWN:
-       piece.move("down");break;
+        piece.move("down", board); break;
     }
-    board.positionPiece(piece);
+    
+   model.positionPiece(piece);
 };
 
 
@@ -87,115 +96,170 @@ var lastFrameTime = Date.now();
 function render(){
     
 
-        requestAnimationFrame(render);
-        var time = Date.now();    
-        frameTime = time - lastFrameTime;
-        lastFrameTime = time;
-        cumulatedTime += frameTime;
+    requestAnimationFrame(render);
+    var time = Date.now();    
+    frameTime = time - lastFrameTime;
+    lastFrameTime = time;
+    cumulatedTime += frameTime;
 
-        while(cumulatedTime > gameStepTime ){
-            updatePiece();
-            cumulatedTime -= gameStepTime;
+
+    while(cumulatedTime > gameStepTime ){
+        updatePiece(piece);
+        if(piece.detectBottomBound(model.getBoard())){
+            
+            piece = getNewPiece();
+            setUpPiece(piece);
         }
-        boardView.displayBoard();      
+        cumulatedTime -= gameStepTime;
+    }
+    boardView.displayBoard();      
 };
 
 
-function updatePiece(){
-    board.erasePath(piece);
-    piece.move("down");
-    board.positionPiece(piece);
-}
+function updatePiece(piece){
+    model.erasePath(piece);
+    piece.move("down", model.getBoard());
+    model.positionPiece(piece);
+};
 
-var board = new TetrisBoard();
-var piece = new L_PIECE();
-var boardView = new BoardView(board);
+function getNewPiece(){
+    return PIECES[Math.floor(Math.random()*PIECES.length)];
+};
 
-piece.setStartPosition();
-board.positionPiece(piece);
-boardView.displayBoard();
+function setUpPiece(piece){
+    piece.resetPiece();
+    piece.setStartPosition();
+    model.positionPiece(piece);
+    boardView.displayBoard();
+};
+
+var model = new TetrisBoard();
+var piece = getNewPiece();
+var boardView = new BoardView(model);
+
+setUpPiece(piece);
 document.addEventListener('keydown', keyListener);
 render();
 
 
 
+
+
+
+
+
+
+
+// piece.setStartPosition();
+//model.positionPiece(piece);
+//model.printBoard();
+
+
+//model.erasePath(piece);
+// piece.move("right");
+
+
+// for(var i = 0; i < 18; i++){
+//    model.erasePath(piece);
+//     piece.move("down");
+//    model.positionPiece(piece);
+// }
+// document.write("<br>");
+//model.printBoard();
+
+// piece = new O_PIECE();
+// document.write("<br>");
+// piece.setStartPosition();
+//model.positionPiece(piece);
+//model.printBoard();
+
+
+
+
+
+
+
+
+
+
+
 // piece.getPointsArray();
-// board.printBoard();
+//model.printBoard();
 // document.write("<br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.erasePath(piece);
-// board.positionPiece(piece);
+//model.erasePath(piece);
+//model.positionPiece(piece);
 // document.write("<br>");
-// board.printBoard();
-// boardView.displayBoard();
+//model.printBoard();
+//modelView.displayBoard();
 
 
 
 
-// board.erasePath(piece);
+//model.erasePath(piece);
 // piece.move("right");
 // document.write("right <br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.positionPiece(piece);
-// board.printBoard();
-// boardView.displayBoard();
+//model.positionPiece(piece);
+//model.printBoard();
+//modelView.displayBoard();
 
-// board.erasePath(piece);
+//model.erasePath(piece);
 // piece.move("right");
 // document.write("right <br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.positionPiece(piece);
-// board.printBoard();
-// boardView.displayBoard();
+//model.positionPiece(piece);
+//model.printBoard();
+//modelView.displayBoard();
 
 
-// board.erasePath(piece);
+//model.erasePath(piece);
 // piece.move("down");
 // document.write("down <br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.positionPiece(piece);
-// board.printBoard();
+//model.positionPiece(piece);
+//model.printBoard();
 
-// board.erasePath(piece);
+//model.erasePath(piece);
 // piece.move("down");
 // document.write("down <br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.positionPiece(piece);
-// board.printBoard();
+//model.positionPiece(piece);
+//model.printBoard();
 
-// board.erasePath(piece);
+//model.erasePath(piece);
 // piece.rotateCounterClock();
 // document.write("rotate <br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.positionPiece(piece);
-// board.printBoard();
+//model.positionPiece(piece);
+//model.printBoard();
 
-// board.erasePath(piece);
+//model.erasePath(piece);
 // piece.rotateCounterClock();
 // document.write("rotate <br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.positionPiece(piece);
-// board.printBoard();
+//model.positionPiece(piece);
+//model.printBoard();
 
-// board.erasePath(piece);
+//model.erasePath(piece);
 // piece.rotateCounterClock();
 // document.write("rotate <br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.positionPiece(piece);
-// board.printBoard();
+//model.positionPiece(piece);
+//model.printBoard();
 
-// board.erasePath(piece);
+//model.erasePath(piece);
 // piece.rotateCounterClock();
 // document.write("rotate <br>");
 // piece.printAllPoints();
 // document.write("<br>");
-// board.positionPiece(piece);
-// board.printBoard();
+//model.positionPiece(piece);
+//model.printBoard();

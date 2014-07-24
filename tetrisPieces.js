@@ -2,7 +2,9 @@
 var ROWS = 20;
 var COLUMNS = 10;
 var COLORS = ["red", "blue", "green", "plum", "purple", "skyblue", "springgreen"];
+
 function Point(x, y){
+    
     this.x = x || 0;
     this.y = y || 0;
     this.moveDown = 1;
@@ -55,20 +57,32 @@ function Point(x, y){
 
 };
 
-function TetrisPiece (colorIndex, pivot){
+
+
+function TetrisPiece (colorIndex,  x , y){
     this.colorIndex = colorIndex;
-    this.pivot = pivot
+    
+    if(x != undefined && y != undefined){
+        this.pivot = new Point(x, y);
+        this.x = x;
+        this.y = y;
+    }
+    else{
+        this.pivot = undefined; //for the O_Piece
+    }
+    
     this.pointsArray = [];
     this.counterClockArray = [[0, 1],[-1, 0]];
+     
 
-    
     //To move the tetris piece
     //This function also checks if the move is valid
-    TetrisPiece.prototype.move = function(direction){
+    TetrisPiece.prototype.move = function(direction, board){
 
         var tempArray = [];
         var changedPivot = false;
         var tempPivot;
+        
         
         for(var i = 0; i < this.pointsArray.length; i++){
             var tempPoint = this.pointsArray[i].clone(); //deep copy 
@@ -83,10 +97,16 @@ function TetrisPiece (colorIndex, pivot){
                 tempPoint.addX();
             }
             
+            
             //If the movement is invalid don't update the points 
-            if(!this.isInBounds(tempPoint)){
+            if(!this.isInBounds(tempPoint) ){ 
                 return;
             }
+            
+            var position = board[tempPoint.getX()][tempPoint.getY()];
+            //the position has a piece at that location on the board
+            if(position >= 0)
+                return;
             
             tempArray.push(tempPoint);
 
@@ -110,9 +130,10 @@ function TetrisPiece (colorIndex, pivot){
         }
 
         var tempArray = [];
-        
+
+        //Loop to check if the points after the rotation is valid
         for(var i = 0; i < this.pointsArray.length; i++){
-            var tempPoint = this.pointsArray[i].clone(); //shallow copy
+            var tempPoint = this.pointsArray[i].clone(); //deep copy
             if(!tempPoint.equals(this.pivot)){
                 var pointResult = this.pivot.subtract(tempPoint);
 
@@ -121,15 +142,15 @@ function TetrisPiece (colorIndex, pivot){
                 var pointTransformed = new Point(x, y);
                 var newPoint = this.pivot.add(pointTransformed);
 
-                if(this.isInBounds(newPoint)){
-                    tempArray.push(newPoint);
-                }
-                else
+                if(!this.isInBounds(newPoint)){
                     return;
-
+                }
+                tempArray.push(newPoint);
             }
         }
 
+
+        //All the points are vaild, so update the points to the pointsArray
         var pointsArrayIndex = 0;
 
         for(var i = 0; i < tempArray.length; i++){
@@ -152,9 +173,33 @@ function TetrisPiece (colorIndex, pivot){
     };
 
     TetrisPiece.prototype.isInBounds = function(point){
-        return point.getY() >= 0 && point.getY() < COLUMNS && point.getX() < ROWS;
+        var heightBounds = point.getY() >= 0 && point.getY() < COLUMNS;
+        var widthBounds = point.getX() < ROWS && point.getX() >= 0;
+        return heightBounds && widthBounds;
     };
 
+    //To detect if the piece in motion has hit the top of another piece
+    TetrisPiece.prototype.detectBottomBound = function(board){
+
+        for(var i = 0; i < this.pointsArray.length; i++){
+            var point = this.pointsArray[i];
+
+            var isAtBottom = point.getX() >= ROWS - 1; //boolean
+            if(isAtBottom){
+                return true;
+            }
+            var tempPoint = new Point(point.getX() + 1, point.getY());
+            //If the tempPoint is not part of the tetris piece 
+            if(!this.checkPoint(tempPoint)){
+                var pointPosition = board[(point.getX() + 1)][point.getY()];
+                //if the position of tempPoint is an actual piece
+                if(pointPosition >= 0){
+                    return true;                
+                }
+            }            
+        }
+        return false;
+    };
     
     TetrisPiece.prototype.addPoint = function(point){
         this.pointsArray.push(point);
@@ -195,7 +240,7 @@ function TetrisPiece (colorIndex, pivot){
 
     //Sets the start position for any tetris piece so it starts in the middle
     TetrisPiece.prototype.setStartPosition = function(){
-        var amountToShift = (COLUMNS-this.pointsArray.length)/2
+        var amountToShift = (COLUMNS-this.pointsArray.length) /2;
         for (var i = 0; i < this.pointsArray.length; i++){
             var point = this.pointsArray[i]; //shallow copy;
             point.addRight(amountToShift);
@@ -215,6 +260,35 @@ function TetrisPiece (colorIndex, pivot){
         }
     };
 
+    TetrisPiece.prototype.emptyArray = function(){
+        for(var i = this.pointsArray.length-1 ; i >= 0; i--){
+            this.pointsArray.splice(i, 1);
+        }
+    };
+
+    TetrisPiece.prototype.setPivot = function(){
+        if(this.pivot != undefined)
+            this.pivot = new Point(this.x, this.y);
+    };
+
+    //Remember to call this function to reset the tetris piece to avoid
+    //shallow cloning and also to add the pieces' points to it's points array
+    TetrisPiece.prototype.resetPiece = function() {
+        this.emptyArray();
+        this.addAllPoints();
+        this.setPivot();
+    };
+
+    //Checks if the point is in the array 
+    TetrisPiece.prototype.checkPoint = function(point){
+        for(var j = 0; j < this.pointsArray.length; j++){
+            var otherPoint = this.pointsArray[j];
+            if(point.equals(otherPoint)){
+                return true;
+            }
+        }
+        return false;
+    };
 
 };
          
@@ -223,96 +297,98 @@ function TetrisPiece (colorIndex, pivot){
 
 
 
-Z_PIECE.prototype = new TetrisPiece(0, new Point(0,1));
+Z_PIECE.prototype = new TetrisPiece(0, 0 ,1);
 
 function Z_PIECE (){
     this.piece =  [[1,1,0],
-                   [0,1,1]];
-    this.addAllPoints();
-   
-   
+                   [0,1,1]];    
+      
     Z_PIECE.prototype.toString = function(){
         return "Z Piece";
     };
-
 };
 
-I_PIECE.prototype = new TetrisPiece(1 ,new Point(0,1));
+I_PIECE.prototype = new TetrisPiece(1, 0, 1);
 
 function I_PIECE(){
     this.piece = [1,1,1,1];
-
-    for(var i = 0; i < this.piece.length; i++){
-        this.addPoint(new Point(0, i));
-    }
     
     I_PIECE.prototype.toString = function(){
         return "I Piece";
     };
+
+    I_PIECE.prototype.addAllPoints = function(){
+        for(var i = 0; i < this.piece.length; i++){
+            this.addPoint(new Point(0, i));
+        }
+    };
 };
 
 
-S_PIECE.prototype = new TetrisPiece(2, new Point(0,1));
+S_PIECE.prototype = new TetrisPiece(2, 0, 1);
 
 function S_PIECE(){
     this.piece = [[0,1,1],
                   [1,1,0]];
-    this.addAllPoints();
 
     S_PIECE.prototype.toString = function(){
         return "S Piece";
     };
 };
 
-T_PIECE.prototype = new TetrisPiece(3, new Point(1,1));
+T_PIECE.prototype = new TetrisPiece(3, 1, 1);
 
 
 function T_PIECE(){
     this.piece = [[0,1,0],
-                  [1,1,1]];
-    this.addAllPoints();
+                  [1,1,1]];  
 
     T_PIECE.prototype.toString = function(){
         return "T Piece";
     };
+
+    
 };
 
-J_PIECE.prototype = new TetrisPiece(4, new Point(1,1));
+J_PIECE.prototype = new TetrisPiece(4, 1, 1);
 
 function J_PIECE(){
     this.piece = [[1,0,0],
                   [1,1,1]];
-    this.addAllPoints();
+   
     
     J_PIECE.prototype.toString = function(){
         return "J Piece";
     };
-    
+        
 };
 
-L_PIECE.prototype = new TetrisPiece(5, new Point(1,1));
+L_PIECE.prototype = new TetrisPiece(5, 1, 1);
 
 function L_PIECE(){
     this.piece = [[0,0,1],
                   [1,1,1]];
-    this.addAllPoints();
+   
 
     L_PIECE.prototype.toString = function(){
         return "L Piece";
     };
 };
 
-O_PIECE.prototype = new TetrisPiece(6, undefined);
+O_PIECE.prototype = new TetrisPiece(6, undefined, undefined );
 
 function O_PIECE(){
     this.piece = [[1,1],
                   [1,1]];
-    this.addAllPoints();
 
     O_PIECE.prototype.toString = function(){
         return "O Piece";
     };
 };
+
+
+
+
 
 
 function TetrisBoard (){
@@ -372,10 +448,5 @@ function TetrisBoard (){
 
     TetrisBoard.prototype.getBoard = function(){
         return this.board;
-    };
-
-    TetrisBoard.prototype.movePieceDown = function(){
-        
-    };
-    
+    };  
 };
