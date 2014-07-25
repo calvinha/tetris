@@ -14,9 +14,10 @@ var RIGHT = 39;
 var DOWN = 40;
 var UP = 38;
 
-var PIECES = [new I_PIECE()];//, new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE];
+var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE];
 
 var lines = true;
+var leftRight = false;
 
 function BoardView(model){
     
@@ -91,7 +92,7 @@ function keyListener(keyevent){
         piece.move("down", board); break;
     }
     
-   model.positionPiece(piece);
+    model.positionPiece(piece);
 };
 
 
@@ -100,6 +101,9 @@ var cumulatedTime = 0;
 var frameTime = 0;
 var lastFrameTime = Date.now();
 
+var evenPiece = true;
+var count = 0;
+var previousCount = 0;
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 function render(){
     
@@ -113,15 +117,23 @@ function render(){
 
     while(cumulatedTime > gameStepTime ){
         updatePiece(piece);
-        if(piece.detectBottomBound(model.getBoard())){
+        if(piece.detectBottomBound(model.getBoard())){            
             model.checkBoard();
-            piece = getNewPiece();
-            setUpPiece(piece);
+
+            if(count % 2 == 0){
+                setTimeout(doStuff, 500);
+            }
+            count++;
         }
         cumulatedTime -= gameStepTime;
     }
     boardView.displayBoard();      
 };
+
+function doStuff (){
+    piece = getNewPiece();
+    setUpPiece(piece);
+}
 
 
 function updatePiece(piece){
@@ -148,6 +160,11 @@ var boardView = new BoardView(model);
 setUpPiece(piece);
 document.addEventListener('keydown', keyListener);
 render();
+
+// setTimeout(func, 1000);
+// function func() {
+//     alert('Do stuff here');
+// }
 
 
 
