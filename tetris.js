@@ -118,10 +118,10 @@ function render(){
     while(cumulatedTime > gameStepTime ){
         updatePiece(piece);
         if(piece.detectBottomBound(model.getBoard())){            
-            model.checkBoard();
-
-            if(count % 2 == 0){
-                setTimeout(doStuff, 500);
+            var cleared = model.checkBoard();
+            if(count % 2 == 0 || cleared){
+                piece = getNewPiece();
+                setUpPiece(piece);
             }
             count++;
         }
@@ -130,10 +130,6 @@ function render(){
     boardView.displayBoard();      
 };
 
-function doStuff (){
-    piece = getNewPiece();
-    setUpPiece(piece);
-}
 
 
 function updatePiece(piece){

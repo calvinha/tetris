@@ -459,6 +459,7 @@ function TetrisBoard (){
     TetrisBoard.prototype.checkBoard = function(){
         //loop through the board starting at the bottom
 
+        var clearedLines = false;
         var rowArray = [];
         for(var i = ROWS - 1; i >= 0; i--){
             if(this.isRowFull(i)){
@@ -467,9 +468,11 @@ function TetrisBoard (){
             else if(rowArray.length > 0){ //If there are some lines that need to be cleared
                 this.clearLines(rowArray);
                 rowArray = [];
+                clearedLines = true;
             }
-
         }
+
+        return clearedLines;
     };
 
     TetrisBoard.prototype.clearLines = function(rowArray){
