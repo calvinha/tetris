@@ -1,4 +1,5 @@
 
+
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext('2d');
@@ -13,7 +14,9 @@ var RIGHT = 39;
 var DOWN = 40;
 var UP = 38;
 
-var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE];
+var PIECES = [new I_PIECE()];//, new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE];
+
+var lines = true;
 
 function BoardView(model){
     
@@ -50,15 +53,20 @@ function BoardView(model){
     };
 
     BoardView.prototype.drawSquare = function(x, y, colorIndex){
-        ctx.beginPath();
-        ctx.rect(x, y, this.boxSizeY, this.boxSizeY);
-        ctx.fillStyle = COLORS[colorIndex];
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
-        // ctx.fillStyle = COLORS[colorIndex];
-        // ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY);
+        if(lines){
+            ctx.beginPath();
+            ctx.rect(x, y, this.boxSizeY, this.boxSizeY);
+            ctx.fillStyle = COLORS[colorIndex];
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+        }
+        else{
+            
+            ctx.fillStyle = COLORS[colorIndex];
+            ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY);
+        }
     };
     
 };
@@ -106,7 +114,7 @@ function render(){
     while(cumulatedTime > gameStepTime ){
         updatePiece(piece);
         if(piece.detectBottomBound(model.getBoard())){
-            
+            model.checkBoard();
             piece = getNewPiece();
             setUpPiece(piece);
         }
@@ -143,7 +151,8 @@ render();
 
 
 
-
+// model.printBoard();
+// model.checkBoard();
 
 
 
