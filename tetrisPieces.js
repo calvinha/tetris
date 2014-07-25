@@ -242,6 +242,8 @@ function TetrisPiece (colorIndex,  x , y){
     //Sets the start position for any tetris piece so it starts in the middle
     TetrisPiece.prototype.setStartPosition = function(){
         var amountToShift = (COLUMNS-this.pointsArray.length) /2;
+        amountToShift = Math.floor(amountToShift);
+        
         for (var i = 0; i < this.pointsArray.length; i++){
             var point = this.pointsArray[i]; //shallow copy;
             point.addRight(amountToShift);
@@ -326,6 +328,17 @@ function I_PIECE(){
     };
 };
 
+DOT_PIECE.prototype = new TetrisPiece(3, undefined, undefined);
+
+function DOT_PIECE(){
+    this.piece = [1];
+    
+    DOT_PIECE.prototype.addAllPoints = function(){
+        for(var i = 0; i < this.piece.length; i++){
+            this.addPoint(new Point(0, i));
+        }
+    };
+};
 
 S_PIECE.prototype = new TetrisPiece(3, 0, 1);
 

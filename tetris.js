@@ -1,5 +1,6 @@
 
 
+
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext('2d');
@@ -14,10 +15,9 @@ var RIGHT = 39;
 var DOWN = 40;
 var UP = 38;
 
-var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE];
+var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE, new DOT_PIECE()];
 
-var lines = true;
-var leftRight = false;
+var lines = false;
 
 function BoardView(model){
     
@@ -44,6 +44,7 @@ function BoardView(model){
                 }
                 else{
                     ctx.fillStyle = "#FFFFFF";
+                   // ctx.fillStyle = "black";
                     ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY );
                 }
                 x += this.boxSizeY;
@@ -88,10 +89,9 @@ function keyListener(keyevent){
         piece.move("right", board); break;
     case UP:
         piece.rotateCounterClock(); break;       
-    case DOWN:
+    case DOWN:   
         piece.move("down", board); break;
     }
-    
     model.positionPiece(piece);
 };
 
