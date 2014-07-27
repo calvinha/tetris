@@ -123,12 +123,13 @@ function TetrisPiece (colorIndex,  x , y){
     }
 
     
-    TetrisPiece.prototype.rotateCounterClock = function(){
+    TetrisPiece.prototype.rotateCounterClock = function(board){
         var matrix = this.counterClockArray;
 
         if(this.pivot == undefined){
             return;
         }
+        
 
         var tempArray = [];
 
@@ -146,6 +147,13 @@ function TetrisPiece (colorIndex,  x , y){
                 if(!this.isInBounds(newPoint)){
                     return;
                 }
+                            
+                var position = board[newPoint.getX()][newPoint.getY()];
+                //the position has a piece at that location on the board so the point is invalid
+                if(position >= 0){
+                    return;
+                }
+                
                 tempArray.push(newPoint);
             }
         }

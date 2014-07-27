@@ -91,7 +91,7 @@ function keyListener(keyevent){
     case RIGHT:
         piece.move("right", board); break;
     case UP:
-        piece.rotateCounterClock(); break;       
+        piece.rotateCounterClock(board); break;       
     case DOWN:   
         piece.move("down", board); break;
     }
