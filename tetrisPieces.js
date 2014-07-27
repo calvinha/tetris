@@ -301,7 +301,7 @@ function TetrisPiece (colorIndex,  x , y){
 
 
 
-Z_PIECE.prototype = new TetrisPiece(3, 0 ,1);
+Z_PIECE.prototype = new TetrisPiece(5, 0 ,1);
 
 function Z_PIECE (){
     this.piece =  [[1,1,0],
@@ -312,7 +312,7 @@ function Z_PIECE (){
     };
 };
 
-I_PIECE.prototype = new TetrisPiece(3, 0, 1);
+I_PIECE.prototype = new TetrisPiece(5, 0, 1);
 
 function I_PIECE(){
     this.piece = [1,1,1,1];
@@ -328,7 +328,7 @@ function I_PIECE(){
     };
 };
 
-DOT_PIECE.prototype = new TetrisPiece(3, undefined, undefined);
+DOT_PIECE.prototype = new TetrisPiece(5, undefined, undefined);
 
 function DOT_PIECE(){
     this.piece = [1];
@@ -340,7 +340,7 @@ function DOT_PIECE(){
     };
 };
 
-S_PIECE.prototype = new TetrisPiece(3, 0, 1);
+S_PIECE.prototype = new TetrisPiece(5, 0, 1);
 
 function S_PIECE(){
     this.piece = [[0,1,1],
@@ -351,7 +351,7 @@ function S_PIECE(){
     };
 };
 
-T_PIECE.prototype = new TetrisPiece(3, 1, 1);
+T_PIECE.prototype = new TetrisPiece(5, 1, 1);
 
 
 function T_PIECE(){
@@ -365,7 +365,7 @@ function T_PIECE(){
     
 };
 
-J_PIECE.prototype = new TetrisPiece(3, 1, 1);
+J_PIECE.prototype = new TetrisPiece(5, 1, 1);
 
 function J_PIECE(){
     this.piece = [[1,0,0],
@@ -378,7 +378,7 @@ function J_PIECE(){
         
 };
 
-L_PIECE.prototype = new TetrisPiece(3, 1, 1);
+L_PIECE.prototype = new TetrisPiece(5, 1, 1);
 
 function L_PIECE(){
     this.piece = [[0,0,1],
@@ -390,7 +390,7 @@ function L_PIECE(){
     };
 };
 
-O_PIECE.prototype = new TetrisPiece(3, undefined, undefined );
+O_PIECE.prototype = new TetrisPiece(5, undefined, undefined );
 
 function O_PIECE(){
     this.piece = [[1,1],
@@ -423,8 +423,13 @@ function TetrisBoard (){
     }
 
     // for(var i = 0; i < COLUMNS; i++){
-    //     this.board[ROWS-1][i] = 2;
+    //     this.board[ROWS-1][i] = 1;
+    //     this.board[ROWS-2][i] = 1;
+    //     this.board[ROWS-3][i] = 1;
+    //     this.board[ROWS-4][i] = 1;
+        
     // }
+
     
     /*Print the board*/
     TetrisBoard.prototype.printBoard = function(){
@@ -480,6 +485,7 @@ function TetrisBoard (){
             }
             else if(rowArray.length > 0){ //If there are some lines that need to be cleared
                 this.clearLines(rowArray);
+                linesCleared = linesCleared + rowArray.length; 
                 rowArray = [];
                 clearedLines = true;
             }

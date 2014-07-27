@@ -8,16 +8,19 @@ var ctx = canvas.getContext('2d');
 var WIDTH = canvas.width
 var HEIGHT = canvas.height
 
-var fps = 30;
+var GAMESPEED_INCREMENT = 45;
+var LINES_PER_LEVEL = 10;
 
 var LEFT = 37;
 var RIGHT = 39;
 var DOWN = 40;
 var UP = 38;
 
-var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE, new DOT_PIECE()];
+//var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE, new DOT_PIECE()];
 
-var lines = false;
+var PIECES = [new I_PIECE(), new J_PIECE(), new L_PIECE()];
+
+var blockLines = true;
 
 function BoardView(model){
     
@@ -43,8 +46,8 @@ function BoardView(model){
                     this.drawSquare(x,y,value);
                 }
                 else{
-                    ctx.fillStyle = "#FFFFFF";
-                   // ctx.fillStyle = "black";
+                   ctx.fillStyle = "#FFFFFF";
+                   //ctx.fillStyle = "black";
                     ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY );
                 }
                 x += this.boxSizeY;
@@ -55,7 +58,7 @@ function BoardView(model){
     };
 
     BoardView.prototype.drawSquare = function(x, y, colorIndex){
-        if(lines){
+        if(blockLines){
             ctx.beginPath();
             ctx.rect(x, y, this.boxSizeY, this.boxSizeY);
             ctx.fillStyle = COLORS[colorIndex];
@@ -103,23 +106,22 @@ var lastFrameTime = Date.now();
 
 var evenPiece = true;
 var count = 0;
-var previousCount = 0;
+var linesCleared = 0;
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 function render(){
-    
-
+           
     requestAnimationFrame(render);
     var time = Date.now();    
     frameTime = time - lastFrameTime;
     lastFrameTime = time;
     cumulatedTime += frameTime;
 
-
     while(cumulatedTime > gameStepTime ){
         updatePiece(piece);
         if(piece.detectBottomBound(model.getBoard())){            
             var cleared = model.checkBoard();
             if(count % 2 == 0 || cleared){
+                updateGameSpeed();
                 piece = getNewPiece();
                 setUpPiece(piece);
             }
@@ -136,6 +138,16 @@ function updatePiece(piece){
     model.erasePath(piece);
     piece.move("down", model.getBoard());
     model.positionPiece(piece);
+};
+
+function updateGameSpeed(){
+
+    while(linesCleared >= LINES_PER_LEVEL){
+        gameStepTime -= GAMESPEED_INCREMENT;
+        //alert(gameStepTime);
+        linesCleared -= LINES_PER_LEVEL;
+    }
+
 };
 
 function getNewPiece(){
