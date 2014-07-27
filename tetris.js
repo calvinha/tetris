@@ -19,6 +19,8 @@ var UP = 38;
 
 var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE, new DOT_PIECE()];
 
+//var PIECES = [new I_PIECE()];
+
 var blockLines = true;
 
 function BoardView(model){
@@ -117,8 +119,11 @@ function render(){
 
     while(cumulatedTime > gameStepTime ){
         updatePiece(piece);
-        if(piece.detectBottomBound(model.getBoard())){            
-            var cleared = model.checkBoard();
+        if(piece.detectBottomBound(model.getBoard())){
+            var cleared = model.checkBoard(); //cleared the rows first
+            if(model.isGameOver()){
+                alert("game over!");
+            }
             if(count % 2 == 0 || cleared){
                 updateGameSpeed();
                 piece = getNewPiece();

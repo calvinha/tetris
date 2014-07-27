@@ -513,7 +513,7 @@ function TetrisBoard (){
                 linesCleared = linesCleared + rowArray.length; 
                 rowArray = [];
                 clearedLines = true;
-                i = ROWS + ROW_OFFSET;
+                i = ROWS + ROW_OFFSET; //reset to start at the bottom again
             }
         }
 
@@ -564,9 +564,14 @@ function TetrisBoard (){
     };
 
     TetrisBoard.prototype.isGameOver = function(){
-        
-        for(var j = 0; j < COLUMNS; j++){
-                                 
+
+
+        for(var i = 0; i <= ROW_OFFSET; i++){
+            for(var j = 0; j < COLUMNS; j++){
+                if(this.board[i][j] >= 0){
+                    return true;
+                }
+            }
         }
         return false;
     };
