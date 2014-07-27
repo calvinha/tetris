@@ -1,6 +1,8 @@
 
 var ROWS = 20;
 var COLUMNS = 10;
+var ROW_OFFSET = 4;
+
 var COLORS = ["red", "blue", "green", "plum", "purple", "skyblue", "springgreen"];
 
 function Point(x, y){
@@ -51,8 +53,13 @@ function Point(x, y){
     Point.prototype.addRight = function(amount){
         this.y += amount;
     };
+    
+    Point.prototype.addDown = function(amount){
+        this.x += amount;
+    };
+        
     Point.prototype.stop = function(){
-        this.x = ROWS-1;
+        this.x = ROWS + ROW_OFFSET -1;
     }
 
 };
@@ -73,7 +80,7 @@ function TetrisPiece (colorIndex,  x , y){
     
     this.pointsArray = [];
     this.counterClockArray = [[0, 1],[-1, 0]];
-     
+    
 
     //To move the tetris piece
     //This function also checks if the move is valid
@@ -147,7 +154,7 @@ function TetrisPiece (colorIndex,  x , y){
                 if(!this.isInBounds(newPoint)){
                     return;
                 }
-                            
+                
                 var position = board[newPoint.getX()][newPoint.getY()];
                 //the position has a piece at that location on the board so the point is invalid
                 if(position >= 0){
@@ -172,7 +179,7 @@ function TetrisPiece (colorIndex,  x , y){
                 this.pointsArray[++pointsArrayIndex] = otherPoint;
             }
             pointsArrayIndex++;              
-        }               
+        }
     };
 
     TetrisPiece.prototype.updatePoints = function(array){
@@ -182,8 +189,8 @@ function TetrisPiece (colorIndex,  x , y){
     };
 
     TetrisPiece.prototype.isInBounds = function(point){
-        var heightBounds = point.getY() >= 0 && point.getY() < COLUMNS;
-        var widthBounds = point.getX() < ROWS && point.getX() >= 0;
+        var widthBounds = point.getY() >= 0 && point.getY() < COLUMNS;
+        var heightBounds = point.getX() < (ROWS+ROW_OFFSET) && point.getX() >= 0;
         return heightBounds && widthBounds;
     };
 
@@ -193,7 +200,7 @@ function TetrisPiece (colorIndex,  x , y){
         for(var i = 0; i < this.pointsArray.length; i++){
             var point = this.pointsArray[i];
 
-            var isAtBottom = point.getX() >= ROWS - 1; //boolean
+            var isAtBottom = point.getX() >= (ROWS + ROW_OFFSET)- 1; //boolean
             if(isAtBottom){
                 return true;
             }
@@ -255,9 +262,11 @@ function TetrisPiece (colorIndex,  x , y){
         for (var i = 0; i < this.pointsArray.length; i++){
             var point = this.pointsArray[i]; //shallow copy;
             point.addRight(amountToShift);
+            point.addDown(ROW_OFFSET);
         }
         if(this.pivot != undefined){ // the O_Piece does not have a pivot
             this.pivot.addRight(amountToShift);
+            this.pivot.addDown(ROW_OFFSET);
         }
     };
 
@@ -303,7 +312,7 @@ function TetrisPiece (colorIndex,  x , y){
     };
 
 };
-         
+
 
 
 
@@ -314,7 +323,7 @@ Z_PIECE.prototype = new TetrisPiece(5, 0 ,1);
 function Z_PIECE (){
     this.piece =  [[1,1,0],
                    [0,1,1]];    
-      
+    
     Z_PIECE.prototype.toString = function(){
         return "Z Piece";
     };
@@ -378,12 +387,12 @@ J_PIECE.prototype = new TetrisPiece(5, 1, 1);
 function J_PIECE(){
     this.piece = [[1,0,0],
                   [1,1,1]];
-   
+    
     
     J_PIECE.prototype.toString = function(){
         return "J Piece";
     };
-        
+    
 };
 
 L_PIECE.prototype = new TetrisPiece(5, 1, 1);
@@ -391,7 +400,7 @@ L_PIECE.prototype = new TetrisPiece(5, 1, 1);
 function L_PIECE(){
     this.piece = [[0,0,1],
                   [1,1,1]];
-   
+    
 
     L_PIECE.prototype.toString = function(){
         return "L Piece";
@@ -417,31 +426,38 @@ function O_PIECE(){
 function TetrisBoard (){
 
     //To initialize the board with rows
-    this.board = [ROWS];
+    this.board = [ROWS + ROW_OFFSET];
     //Initialize the board with columns
-    for(var i = 0; i < ROWS; i++){
+    for(var i = 0; i < ROWS+ROW_OFFSET; i++){
         this.board[i] = [COLUMNS];
     }
 
     //Zero out the board
-    for(var i = 0; i < ROWS; i++){
+    for(var i = 0; i < ROWS + ROW_OFFSET; i++){
         for(var j = 0; j < COLUMNS; j++){
             this.board[i][j] = -1;
         }
     }
 
     // for(var i = 0; i < COLUMNS; i++){
-    //     this.board[ROWS-1][i] = 1;
-    //     this.board[ROWS-2][i] = 1;
-    //     this.board[ROWS-3][i] = 1;
-    //     this.board[ROWS-4][i] = 1;
-        
+    //     var row = ROWS+ROW_OFFSET;
+    //     if(i != 8){
+    //         this.board[row-1][i] = 5;
+    //         this.board[row-2][i] = 5;
+    //         //this.board[ROWS-3][i] = 1;
+    //         this.board[row-4][i] = 5;
+    //     }
     // }
+
+    // this.board[ROWS+ROW_OFFSET-3][3] = 5;
+    // this.board[ROWS+ROW_OFFSET-3][2] = 5;
+    // this.board[ROWS+ROW_OFFSET-3][1] = 5;
+    //     this.board[ROWS+ROW_OFFSET-3][4] = 5;
 
     
     /*Print the board*/
     TetrisBoard.prototype.printBoard = function(){
-        for(var i = 0; i < ROWS; i++){
+        for(var i = 0 + ROW_OFFSET; i < ROWS + ROW_OFFSET; i++){
             for(var j = 0; j < COLUMNS; j++){
                 value = this.board[i][j];
                 if(value == -1)
@@ -487,7 +503,8 @@ function TetrisBoard (){
 
         var clearedLines = false;
         var rowArray = [];
-        for(var i = ROWS - 1; i >= 0; i--){
+        
+        for(var i = (ROWS + ROW_OFFSET) - 1; i >= (0 + ROW_OFFSET); i--){
             if(this.isRowFull(i)){
                 rowArray.push(i);
             }
@@ -496,6 +513,7 @@ function TetrisBoard (){
                 linesCleared = linesCleared + rowArray.length; 
                 rowArray = [];
                 clearedLines = true;
+                i = ROWS + ROW_OFFSET;
             }
         }
 
@@ -509,18 +527,18 @@ function TetrisBoard (){
         var linesToClear = (firstFilledRow- lastFilledRow) + 1;
         var startRow = lastFilledRow - 1;        
         var targetRow = firstFilledRow;
-      
-        if(startRow < 0){
+        
+        if(startRow < 0 + ROW_OFFSET){
             this.clearLinesNoShift(firstFilledRow, lastFilledRow);
         }
         
-        for(var i = startRow; i >= 0; i--){
+        for(var i = startRow; i >= (0 + ROW_OFFSET); i--){
             for(var j = 0; j < COLUMNS; j++){
                 this.board[targetRow][j] = this.board[startRow][j];                
             }
             targetRow--;
             startRow--;
-            if(startRow < 0){
+            if(startRow < (0 + ROW_OFFSET) ){
                 this.clearLinesNoShift(targetRow, lastFilledRow);
             }
         }
@@ -543,5 +561,13 @@ function TetrisBoard (){
             }
         }
         return true;
+    };
+
+    TetrisBoard.prototype.isGameOver = function(){
+        
+        for(var j = 0; j < COLUMNS; j++){
+                                 
+        }
+        return false;
     };
 };

@@ -11,14 +11,13 @@ var HEIGHT = canvas.height
 var GAMESPEED_INCREMENT = 45;
 var LINES_PER_LEVEL = 10;
 
+
 var LEFT = 37;
 var RIGHT = 39;
 var DOWN = 40;
 var UP = 38;
 
-//var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE, new DOT_PIECE()];
-
-var PIECES = [new I_PIECE(), new J_PIECE(), new L_PIECE()];
+var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE, new DOT_PIECE()];
 
 var blockLines = true;
 
@@ -39,7 +38,7 @@ function BoardView(model){
         var y = 0;
         
         
-        for(var i = 0; i < board.length; i++){
+        for(var i = (0 + ROW_OFFSET); i < board.length; i++){
             for(var j = 0; j < board[0].length; j++){             
                 var value = board[i][j];
                 if(value >= 0){
@@ -169,10 +168,8 @@ setUpPiece(piece);
 document.addEventListener('keydown', keyListener);
 render();
 
-// setTimeout(func, 1000);
-// function func() {
-//     alert('Do stuff here');
-// }
+
+
 
 
 
