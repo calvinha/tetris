@@ -4,11 +4,26 @@
     <link rel = "stylesheet" type = "text/css" href = "tetris.css">
   </head> 
   <body>
-    <canvas id ="myCanvas" width = "310" height = "620"></canvas>
+    <h1 id = "gameTitle">Tetris</h1>
+    
+    <!-- <div class = "container"> -->
+    <!--   <\!-- <canvas id ="myCanvas" width = "310" height = "620"></canvas> -\-> -->
+    <!--   <div id = "firstPiece"></div> -->
+    <!--   <div id ="nextPiece"></div>     -->
+    <!-- </div> -->
+
+    <div id ="main">
+
+      <canvas id ="myCanvas" class = "default" width = "310" height = "620"></canvas>
+      <div id = "menu" class = "default">
+        <canvas id = "nextPiece" class = "default" width = "100" height = "100"></canvas>
+      </div>
+    </div>
+
     <script src = "tetrisPieces.js"></script>
     <script src = "tetris.js"></script>
   </body>
 </html>    
 
 
-<!-- height/rows == 31; 31*COLUMNS = 310-->
+<!-- height/rows == 31; 31*COLUMNS = 310 -->

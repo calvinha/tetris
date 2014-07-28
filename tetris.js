@@ -94,9 +94,12 @@ function keyListener(keyevent){
     case UP:
         piece.rotateCounterClock(board); break;       
     case DOWN:   
-        piece.move("down", board); break;
+        piece.move("down", board);
+        break;
     }
     model.positionPiece(piece);
+    //http://forums.asp.net/t/1455027.aspx?how+to+disable+scroll+bar+moving+when+arrow+key+press+down
+    keyevent.returnValue = false; //for safari 
 };
 
 
@@ -171,7 +174,7 @@ var boardView = new BoardView(model);
 
 setUpPiece(piece);
 document.addEventListener('keydown', keyListener);
-render();
+//render();
 
 
 

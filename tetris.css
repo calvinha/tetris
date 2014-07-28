@@ -1,9 +1,48 @@
-#myCanvas {
+
+.default{
     
     border-color: #CACACA;
     border-style: solid;
+}
+
+#gameTitle {
     margin: 0px auto;
-    margin-top: 70px;
-    display: block;
-                
-} 
+    margin-top: 20px; 
+    text-align: center;
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 3em;
+
+    color: #CACACA;
+}
+
+#main {
+    margin: 1em auto;
+    border:solid 1px #000;
+    text-align:center;    
+    width: 50em;
+    
+}
+
+#myCanvas {
+    
+    /* border-color: #CACACA; */
+    /* border-style: solid; */
+    display: inline-block;
+    vertical-align: top;    
+}
+
+#menu {
+    width: 180px;
+    height: 620px;
+    display: inline-block;
+    /* border-color: #CACACA; */
+    /* border-style: solid; */
+    vertical-align:top;
+}
+
+#nextPiece {
+    /* border-color: #CACACA; */
+    /* border-style: solid; */
+    display: inline-block;
+    vertical-align: top;  
+}
