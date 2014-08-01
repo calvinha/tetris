@@ -79,7 +79,10 @@ function TetrisPiece (colorIndex,  x , y){
     }
     
     this.pointsArray = [];
+    this.displayArray = [];
     this.counterClockArray = [[0, 1],[-1, 0]];
+    this.setDisplay = false;
+    this.filled = false;
     
 
     //To move the tetris piece
@@ -249,24 +252,25 @@ function TetrisPiece (colorIndex,  x , y){
                 
                 if( isValidPoint){                
                     this.addPoint(temp);
-                }
+                    this.displayArray.push(new Point(i, j));
+                }                
             }
-        } 
+        }
     };
 
     //Sets the start position for any tetris piece so it starts in the middle
-    TetrisPiece.prototype.setStartPosition = function(){
-        var amountToShift = (COLUMNS-this.pointsArray.length) /2;
+    TetrisPiece.prototype.setStartPosition = function(offset){
+        var amountToShift = (COLUMNS - this.pointsArray.length) /2;
         amountToShift = Math.floor(amountToShift);
         
         for (var i = 0; i < this.pointsArray.length; i++){
             var point = this.pointsArray[i]; //shallow copy;
             point.addRight(amountToShift);
-            point.addDown(ROW_OFFSET);
+            point.addDown(offset);
         }
         if(this.pivot != undefined){ // the O_Piece does not have a pivot
             this.pivot.addRight(amountToShift);
-            this.pivot.addDown(ROW_OFFSET);
+            this.pivot.addDown(offset);
         }
     };
 
@@ -284,6 +288,7 @@ function TetrisPiece (colorIndex,  x , y){
     TetrisPiece.prototype.emptyArray = function(){
         for(var i = this.pointsArray.length-1 ; i >= 0; i--){
             this.pointsArray.splice(i, 1);
+            this.displayArray.splice(i, 1);
         }
     };
 
@@ -311,6 +316,26 @@ function TetrisPiece (colorIndex,  x , y){
         return false;
     };
 
+    TetrisPiece.prototype.setDisplayPiece = function(board){
+
+//        if(!this.setDisplay){
+
+        var amountToShift = Math.floor( (Math.abs ((BLOCKS_PER_COLUMN) - this.displayArray.length) /2) ) + 1;
+        var shiftRight = amountToShift - 1;
+
+            for(var i = 0; i < this.displayArray.length; i++){
+                var point = this.displayArray[i]; //shallow copy
+                point.addDown(amountToShift);
+                point.addRight(shiftRight);
+                board[point.getX()][point.getY()] = this.colorIndex;
+            }
+    };
+
+    TetrisPiece.prototype.getDisplayArray = function(){
+        return this.displayArray;
+    };
+
+
 };
 
 
@@ -323,10 +348,11 @@ Z_PIECE.prototype = new TetrisPiece(5, 0 ,1);
 function Z_PIECE (){
     this.piece =  [[1,1,0],
                    [0,1,1]];    
-    
     Z_PIECE.prototype.toString = function(){
         return "Z Piece";
     };
+
+    
 };
 
 I_PIECE.prototype = new TetrisPiece(5, 0, 1);
@@ -340,7 +366,9 @@ function I_PIECE(){
 
     I_PIECE.prototype.addAllPoints = function(){
         for(var i = 0; i < this.piece.length; i++){
+            
             this.addPoint(new Point(0, i));
+            this.displayArray.push(new Point(0, i));
         }
     };
 };
@@ -353,6 +381,7 @@ function DOT_PIECE(){
     DOT_PIECE.prototype.addAllPoints = function(){
         for(var i = 0; i < this.piece.length; i++){
             this.addPoint(new Point(0, i));
+            this.displayArray.push(new Point(0, i));
         }
     };
 };
@@ -439,6 +468,20 @@ function TetrisBoard (){
         }
     }
 
+    //For
+    this.miniBoard = [BLOCKS_PER_ROW];
+    
+    for(var i = 0; i < BLOCKS_PER_ROW; i++){
+        this.miniBoard[i] = [BLOCKS_PER_COLUMN];
+    }
+
+    for(var i = 0; i < BLOCKS_PER_ROW; i++){
+        for(var j = 0; j < BLOCKS_PER_COLUMN; j++){
+            this.miniBoard[i][j] = -1;
+        }
+    }
+
+
     // for(var i = 0; i < COLUMNS; i++){
     //     var row = ROWS+ROW_OFFSET;
     //     if(i != 8){
@@ -483,14 +526,23 @@ function TetrisBoard (){
         
     };
 
-    TetrisBoard.prototype.erasePath = function(piece){
+    
 
-        var pointsList = piece.getPointsArray();
+    TetrisBoard.prototype.erasePath = function(piece, mainBoard){
+        var pointsList;
+        if(mainBoard)
+            pointsList = piece.getPointsArray();
+        else
+            pointsList = piece.getDisplayArray();
+
         for(var i = 0; i < pointsList.length; i++){
             var point = pointsList[i];
             var x = point.getX();
             var y = point.getY();
-            this.board[x][y] = -1;
+            if(mainBoard)
+                this.board[x][y] = -1;
+            else
+                this.miniBoard[x][y] = -1;
         }
     };
 
@@ -574,5 +626,9 @@ function TetrisBoard (){
             }
         }
         return false;
+    };
+
+    TetrisBoard.prototype.getMiniBoard = function(){
+        return this.miniBoard;
     };
 };

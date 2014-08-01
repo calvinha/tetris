@@ -5,12 +5,18 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext('2d');
 
-var WIDTH = canvas.width
-var HEIGHT = canvas.height
+var WIDTH = canvas.width;
+var HEIGHT = canvas.height;
 
 var GAMESPEED_INCREMENT = 45;
 var LINES_PER_LEVEL = 10;
 
+
+var nextPieceCanvas = document.getElementById("nextPiece");
+var nextCtx = nextPieceCanvas.getContext("2d");
+var PIECE_SIZE = nextPieceCanvas.width;
+var BLOCKS_PER_ROW = 6;
+var BLOCKS_PER_COLUMN = 6;
 
 var LEFT = 37;
 var RIGHT = 39;
@@ -23,6 +29,7 @@ var PIECES = [new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_P
 
 var blockLines = true;
 
+
 function BoardView(model){
     
     this.model = model;
@@ -33,23 +40,22 @@ function BoardView(model){
         return "Board View";
     };
     
-    BoardView.prototype.displayBoard = function(){
+    BoardView.prototype.displayBoard = function(start, board, context ){
         
-        var board = this.model.getBoard();
         var x = 0;
         var y = 0;
+
         
-        
-        for(var i = (0 + ROW_OFFSET); i < board.length; i++){
+        for(var i = start; i < board.length; i++){
             for(var j = 0; j < board[0].length; j++){             
                 var value = board[i][j];
                 if(value >= 0){
-                    this.drawSquare(x,y,value);
+                    this.drawSquare(x,y,value, context);
                 }
                 else{
-                   ctx.fillStyle = "#FFFFFF";
-                   //ctx.fillStyle = "black";
-                    ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY );
+                   context.fillStyle = "#FFFFFF";
+                   //context.fillStyle = "black";
+                    context.fillRect(x, y, this.boxSizeY, this.boxSizeY );
                 }
                 x += this.boxSizeY;
             }
@@ -58,20 +64,20 @@ function BoardView(model){
         }
     };
 
-    BoardView.prototype.drawSquare = function(x, y, colorIndex){
+    BoardView.prototype.drawSquare = function(x, y, colorIndex, context){
         if(blockLines){
-            ctx.beginPath();
-            ctx.rect(x, y, this.boxSizeY, this.boxSizeY);
-            ctx.fillStyle = COLORS[colorIndex];
-            ctx.fill();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'black';
-            ctx.stroke();
+            context.beginPath();
+            context.rect(x, y, this.boxSizeY, this.boxSizeY);
+            context.fillStyle = COLORS[colorIndex];
+            context.fill();
+            context.lineWidth = 2;
+            context.strokeStyle = 'black';
+            context.stroke();
         }
         else{
             
-            ctx.fillStyle = COLORS[colorIndex];
-            ctx.fillRect(x, y, this.boxSizeY, this.boxSizeY);
+            context.fillStyle = COLORS[colorIndex];
+            context.fillRect(x, y, this.boxSizeY, this.boxSizeY);
         }
     };
     
@@ -83,7 +89,7 @@ function BoardView(model){
                
 function keyListener(keyevent){
     
-    model.erasePath(piece);
+    model.erasePath(piece, true);
     var board = model.getBoard();   
 
     switch(keyevent.keyCode){
@@ -115,10 +121,12 @@ var linesCleared = 0;
 function render(){
            
     requestAnimationFrame(render);
-    var time = Date.now();    
+    
+    var time = Date.now();
     frameTime = time - lastFrameTime;
     lastFrameTime = time;
-    cumulatedTime += frameTime;
+    cumulatedTime += frameTime;    
+
 
     while(cumulatedTime > gameStepTime ){
         updatePiece(piece);
@@ -129,20 +137,27 @@ function render(){
             }
             if(count % 2 == 0 || cleared){
                 updateGameSpeed();
-                piece = getNewPiece();
-                setUpPiece(piece);
+                swapPieces();
             }
             count++;
         }
         cumulatedTime -= gameStepTime;
     }
-    boardView.displayBoard();      
+    boardView.displayBoard(ROW_OFFSET, model.getBoard(), ctx);      
 };
 
+function swapPieces(){
 
+    
+    piece = nextPiece;
+    model.erasePath(nextPiece, false);
+    nextPiece = getNewPiece();
+    setUpPiece(piece, nextPiece);
+    boardView.displayBoard(0, model.getMiniBoard(), nextCtx);
+}
 
 function updatePiece(piece){
-    model.erasePath(piece);
+    model.erasePath(piece, true);
     piece.move("down", model.getBoard());
     model.positionPiece(piece);
 };
@@ -161,20 +176,26 @@ function getNewPiece(){
     return PIECES[Math.floor(Math.random()*PIECES.length)];
 };
 
-function setUpPiece(piece){
+function setUpPiece(piece, nextPiece){
     piece.resetPiece();
-    piece.setStartPosition();
+    nextPiece.resetPiece();
+    nextPiece.setDisplayPiece(model.getMiniBoard());
+    piece.setStartPosition(ROW_OFFSET);
     model.positionPiece(piece);
-    boardView.displayBoard();
+    boardView.displayBoard(ROW_OFFSET, model.getBoard(), ctx);
 };
 
-var model = new TetrisBoard();
-var piece = getNewPiece();
-var boardView = new BoardView(model);
 
-setUpPiece(piece);
+
+var model = new TetrisBoard();
+var piece = new DOT_PIECE();
+var boardView = new BoardView(model);
+var nextPiece = new DOT_PIECE();
+setUpPiece(piece, nextPiece);
+
+boardView.displayBoard(0, model.getMiniBoard(), nextCtx);
 document.addEventListener('keydown', keyListener);
-//render();
+render();
 
 
 
@@ -302,3 +323,16 @@ document.addEventListener('keydown', keyListener);
 // document.write("<br>");
 //model.positionPiece(piece);
 //model.printBoard();
+
+
+
+
+// nextCtx.fillStyle = "red";
+// nextCtx.fillRect(0, 0, 20, 20 );
+    
+    
+    
+
+
+
+
