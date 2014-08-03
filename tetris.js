@@ -15,15 +15,16 @@ var LINES_PER_LEVEL = 10;
 var nextPieceCanvas = document.getElementById("nextPiece");
 var nextCtx = nextPieceCanvas.getContext("2d");
 var PIECE_SIZE = nextPieceCanvas.width;
-var BLOCKS_PER_ROW = 6;
-var BLOCKS_PER_COLUMN = 6;
+var BLOCKS_PER_ROW = 6; //6
+var BLOCKS_PER_COLUMN = 5; //6
 
+//Javascript char keyCodes for keyboard input 
 var LEFT = 37;
 var RIGHT = 39;
 var DOWN = 40;
 var UP = 38;
 var SHIFT = 16;
-var paused = false;
+
 
 var PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE, new DOT_PIECE()];
 
@@ -63,6 +64,11 @@ function BoardView(model){
             y += this.boxSizeY;
             x = 0;
         }
+        //Drows a border for the miniDisplay for visual debugging purposes
+        // if(context == nextCtx ){
+        //     context.rect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+        //     context.stroke();
+        // }
     };
 
     BoardView.prototype.drawSquare = function(x, y, colorIndex, context){
@@ -125,7 +131,6 @@ var frameTime = 0;
 var lastFrameTime = Date.now();
 
 var count = 0;
-var pauseCount = 0;
 var cleared = false;
 var linesCleared = 0;
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
@@ -210,7 +215,7 @@ function setUpPiece(piece, nextPiece){
 
 
 var model = new TetrisBoard();
-var piece = getNewPiece();
+var piece = new I_PIECE();
 var boardView = new BoardView(model);
 var nextPiece = getNewPiece();
 setUpPiece(piece, nextPiece);

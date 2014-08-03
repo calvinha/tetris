@@ -9,7 +9,6 @@ function Point(x, y){
     
     this.x = x || 0;
     this.y = y || 0;
-    this.moveDown = 1;
     
     Point.prototype.x = null;
     Point.prototype.y = null;
@@ -48,7 +47,7 @@ function Point(x, y){
         this.y -= 1;
     };
     Point.prototype.addX = function(){
-        this.x += this.moveDown;
+        this.x += 1;
     };
     Point.prototype.addRight = function(amount){
         this.y += amount;
@@ -293,18 +292,28 @@ function TetrisPiece (colorIndex,  x , y){
         }
     };
 
-    //Sets the start position for any tetris piece so it starts in the middle
+    //Sets the start position for any tetris piece so it starts in the "middle"
     TetrisPiece.prototype.setStartPosition = function(offset){
-        var amountToShift = (COLUMNS - this.pointsArray.length) /2;
-        amountToShift = Math.floor(amountToShift);
+
+        var columnLength = this.piece[0].length;
+        
+        if(columnLength == undefined){
+            columnLength = this.piece.length;
+        }
+        
+        var shiftRight = Math.floor( (Math.abs ( (COLUMNS) - columnLength) /2) );
+        
+        if(this.toString() == "I Piece"){
+            offset = 1;
+        }
         
         for (var i = 0; i < this.pointsArray.length; i++){
             var point = this.pointsArray[i]; //shallow copy;
-            point.addRight(amountToShift);
+            point.addRight(shiftRight);
             point.addDown(offset);
         }
         if(this.pivot != undefined){ // the O_Piece does not have a pivot
-            this.pivot.addRight(amountToShift);
+            this.pivot.addRight(shiftRight);
             this.pivot.addDown(offset);
         }
     };
@@ -352,19 +361,20 @@ function TetrisPiece (colorIndex,  x , y){
     };
 
     TetrisPiece.prototype.setDisplayPiece = function(board){
-        var length = this.piece[0].length;
-        if(length == undefined){
-            length = this.piece.length;
+        //Columns and row length for the piece
+        var columnLength = this.piece[0].length;
+        var rowLength = this.piece.length;
+        
+        if(columnLength == undefined){
+            columnLength = rowLength;
         }
             
-
-
-        var amountToShift = Math.floor( (Math.abs ((BLOCKS_PER_COLUMN) - length) /2) ) + 1;
-        var shiftRight = amountToShift - 1;
+        var shiftRight = Math.floor( (Math.abs ( (BLOCKS_PER_COLUMN) - columnLength) /2) );
+        var shiftDown = Math.floor( (Math.abs ( (BLOCKS_PER_ROW) - rowLength) /2) );
 
             for(var i = 0; i < this.displayArray.length; i++){
                 var point = this.displayArray[i]; //shallow copy
-                point.addDown(amountToShift);
+                point.addDown(shiftDown);
                 point.addRight(shiftRight);
                 board[point.getX()][point.getY()] = this.colorIndex;
             }
@@ -394,22 +404,25 @@ function Z_PIECE (){
     
 };
 
-I_PIECE.prototype = new TetrisPiece(5, 0, 1);
+I_PIECE.prototype = new TetrisPiece(5, 1, 0);
 
 function I_PIECE(){
-    this.piece = [1,1,1,1];
-    
+    this.piece = [[1],
+                  [1],
+                  [1],
+                  [1]];
     I_PIECE.prototype.toString = function(){
         return "I Piece";
     };
 
-    I_PIECE.prototype.addAllPoints = function(){
-        for(var i = 0; i < this.piece.length; i++){
+    /*The bottom function is for when the I piece starts out as a horizontal piece*/
+    // I_PIECE.prototype.addAllPoints = function(){
+    //     for(var i = 0; i < this.piece.length; i++){
             
-            this.addPoint(new Point(0, i));
-            this.displayArray.push(new Point(0, i));
-        }
-    };
+    //         this.addPoint(new Point(0, i));
+    //         this.displayArray.push(new Point(0, i));
+    //     }
+    // };
 };
 
 DOT_PIECE.prototype = new TetrisPiece(5, undefined, undefined);

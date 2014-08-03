@@ -31,15 +31,15 @@
 }
 
 #menu {
-    width: 230px;
+    width: 220px;
     height: 620px;
     display: inline-block;      
     vertical-align:top;
     margin-left: 0.7em;
 }
 
-#nextPiece {
-    margin-top: 1em;
+#nextPiece { /* The display that "contains" the next piece*/
+    margin-top: 1.5em;
     display: inline-block;
     vertical-align: top;  
 }
