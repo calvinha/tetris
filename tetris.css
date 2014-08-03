@@ -3,6 +3,7 @@
     
     border-color: #CACACA;
     border-style: solid;
+    border-radius: 0.4em;
 }
 
 #gameTitle {
@@ -30,10 +31,11 @@
 }
 
 #menu {
-    width: 220px;
+    width: 230px;
     height: 620px;
     display: inline-block;      
     vertical-align:top;
+    margin-left: 0.7em;
 }
 
 #nextPiece {
