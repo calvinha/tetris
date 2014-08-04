@@ -30,7 +30,7 @@ var PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_
 
 
 var blockLines = true;
-
+var shift = false;               
 
 function BoardView(model){
     
@@ -93,11 +93,11 @@ function BoardView(model){
 
                 
 /*Looks for user arrow key inputs*/
-               
+
 function keyListener(keyevent){
     
     model.erasePath(piece, true);
-    var board = model.getBoard();   
+    var board = model.getBoard();
 
     switch(keyevent.keyCode){
     case LEFT:
@@ -109,17 +109,10 @@ function keyListener(keyevent){
     case DOWN:   
         piece.move("down", board); break;
     case SHIFT:
-        piece.dropPiece(board); break;
+        piece.dropPiece(board); shift = true; break;
     }
-    model.positionPiece(piece); 
-    // if(piece.detectBottomBound(board)){
-    //     var cleared = model.checkBoard(); cleared the rows first        
-    //     boardView.displayBoard(ROW_OFFSET, model.getBoard(), ctx);          
-    //     updateGameSpeed();
-    //     swapPieces();
-        
-    // }
-    //http://forums.asp.net/t/1455027.aspx?how+to+disable+scroll+bar+moving+when+arrow+key+press+down
+    model.positionPiece(piece);
+ //http://forums.asp.net/t/1455027.aspx?how+to+disable+scroll+bar+moving+when+arrow+key+press+down
     keyevent.returnValue = false; //for safari
     boardView.displayBoard(ROW_OFFSET, model.getBoard(), ctx);
 };
@@ -133,6 +126,7 @@ var lastFrameTime = Date.now();
 var count = 0;
 var cleared = false;
 var linesCleared = 0;
+var row;
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 function render(){
            
@@ -147,9 +141,9 @@ function render(){
     while(cumulatedTime > gameStepTime ){
 
         updatePiece(piece);
-        if(piece.detectBottomBound(model.getBoard())){
-            var row = model.checkRows();
-            
+        
+        if(shift || piece.detectBottomBound(model.getBoard())){
+            row = model.checkRows();
             if(row >= ROW_OFFSET){// && (count % 2 == 0 && count != 0)){
                 model.eliminateLines(row); //cleared the rows first
                 cleared = true;
@@ -160,18 +154,22 @@ function render(){
             if(model.isGameOver()){
                 console.log("gameover");
             }
-            else if((count % 2 == 0 && count != 0) || cleared){
+            else if(shift ||  (count % 2 == 0 && count != 0) || cleared){
                 updateGameSpeed();
                 swapPieces();
                 cleared = false; //reset clear for better sliding pieces
             }
-            count++;
+            if(!shift)
+                count++;
+            shift = false;
         }
 
         cumulatedTime -= gameStepTime;
     }
     boardView.displayBoard(ROW_OFFSET, model.getBoard(), ctx);      
 };
+
+
 
 function swapPieces(){
 
@@ -181,7 +179,7 @@ function swapPieces(){
     nextPiece = getNewPiece();
     setUpPiece(piece, nextPiece);
     boardView.displayBoard(0, model.getMiniBoard(), nextCtx);
-}
+};
 
 function updatePiece(piece){
     model.erasePath(piece, true);
@@ -215,9 +213,9 @@ function setUpPiece(piece, nextPiece){
 
 
 var model = new TetrisBoard();
-var piece = new I_PIECE();
+var piece = new I_PIECE();//getNewPiece();
 var boardView = new BoardView(model);
-var nextPiece = getNewPiece();
+var nextPiece = new T_PIECE();//getNewPiece();
 setUpPiece(piece, nextPiece);
 
 boardView.displayBoard(0, model.getMiniBoard(), nextCtx);
