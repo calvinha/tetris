@@ -15,8 +15,8 @@ var LINES_PER_LEVEL = 10;
 var nextPieceCanvas = document.getElementById("nextPiece");
 var nextCtx = nextPieceCanvas.getContext("2d");
 var PIECE_SIZE = nextPieceCanvas.width;
-var BLOCKS_PER_ROW = 6; //6
-var BLOCKS_PER_COLUMN = 5; //6
+var BLOCKS_PER_ROW = 6; 
+var BLOCKS_PER_COLUMN = 5; 
 
 //Javascript char keyCodes for keyboard input 
 var LEFT = 37;
@@ -30,7 +30,8 @@ var PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_
 
 
 var blockLines = true;
-var shift = false;               
+var shift = false;
+var level = 1;
 
 function BoardView(model){
     
@@ -126,6 +127,9 @@ var lastFrameTime = Date.now();
 var count = 0;
 var cleared = false;
 var linesCleared = 0;
+
+var totalLinesCleared = 0;
+var lines = 0;
 var row;
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 function render(){
@@ -189,12 +193,17 @@ function updatePiece(piece){
 
 function updateGameSpeed(){
 
+    if(linesCleared >= LINES_PER_LEVEL){
+        level++;
+        document.getElementById("level").innerHTML = "Level: "+ level ;
+    }
+    
     while(linesCleared >= LINES_PER_LEVEL){
+        totalLinesCleared += linesCleared;
         gameStepTime -= GAMESPEED_INCREMENT;
         //alert(gameStepTime);
         linesCleared -= LINES_PER_LEVEL;
     }
-
 };
 
 function getNewPiece(){
@@ -221,145 +230,5 @@ setUpPiece(piece, nextPiece);
 boardView.displayBoard(0, model.getMiniBoard(), nextCtx);
 document.addEventListener('keydown', keyListener);
 render();
-
-
-
-
-
-
-
-
-// model.printBoard();
-// model.checkBoard();
-
-
-
-
-
-
-// piece.setStartPosition();
-//model.positionPiece(piece);
-//model.printBoard();
-
-
-//model.erasePath(piece);
-// piece.move("right");
-
-
-// for(var i = 0; i < 18; i++){
-//    model.erasePath(piece);
-//     piece.move("down");
-//    model.positionPiece(piece);
-// }
-// document.write("<br>");
-//model.printBoard();
-
-// piece = new O_PIECE();
-// document.write("<br>");
-// piece.setStartPosition();
-//model.positionPiece(piece);
-//model.printBoard();
-
-
-
-
-
-
-
-
-
-
-
-// piece.getPointsArray();
-//model.printBoard();
-// document.write("<br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.erasePath(piece);
-//model.positionPiece(piece);
-// document.write("<br>");
-//model.printBoard();
-//modelView.displayBoard();
-
-
-
-
-//model.erasePath(piece);
-// piece.move("right");
-// document.write("right <br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.positionPiece(piece);
-//model.printBoard();
-//modelView.displayBoard();
-
-//model.erasePath(piece);
-// piece.move("right");
-// document.write("right <br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.positionPiece(piece);
-//model.printBoard();
-//modelView.displayBoard();
-
-
-//model.erasePath(piece);
-// piece.move("down");
-// document.write("down <br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.positionPiece(piece);
-//model.printBoard();
-
-//model.erasePath(piece);
-// piece.move("down");
-// document.write("down <br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.positionPiece(piece);
-//model.printBoard();
-
-//model.erasePath(piece);
-// piece.rotateCounterClock();
-// document.write("rotate <br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.positionPiece(piece);
-//model.printBoard();
-
-//model.erasePath(piece);
-// piece.rotateCounterClock();
-// document.write("rotate <br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.positionPiece(piece);
-//model.printBoard();
-
-//model.erasePath(piece);
-// piece.rotateCounterClock();
-// document.write("rotate <br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.positionPiece(piece);
-//model.printBoard();
-
-//model.erasePath(piece);
-// piece.rotateCounterClock();
-// document.write("rotate <br>");
-// piece.printAllPoints();
-// document.write("<br>");
-//model.positionPiece(piece);
-//model.printBoard();
-
-
-
-
-// nextCtx.fillStyle = "red";
-// nextCtx.fillRect(0, 0, 20, 20 );
-    
-    
-    
-
-
 
 

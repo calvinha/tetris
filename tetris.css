@@ -6,18 +6,22 @@
     border-radius: 0.4em;
 }
 
+.fontClass{
+    font-family: Tahoma, Geneva, sans-serif;
+    color: #CACACA;
+}
+
 #gameTitle {
     margin: 0px auto;
     margin-top: 20px; 
     text-align: center;
-    font-family: Tahoma, Geneva, sans-serif;
     font-size: 3em;
-    color: #CACACA;
+    /* font-family: Tahoma, Geneva, sans-serif; */
+    /* color: #CACACA; */
 }
 
 #main {
     margin: 1em auto;
-    /* border:solid 1px #000; */
     text-align:center;    
     width: 50em;
     
@@ -42,4 +46,9 @@
     margin-top: 1.5em;
     display: inline-block;
     vertical-align: top;  
+}
+
+#level{
+    font-size: 2em;
+    display: inline-block;                 
 }
