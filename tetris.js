@@ -9,14 +9,17 @@ var WIDTH = canvas.width;
 var HEIGHT = canvas.height;
 
 var GAMESPEED_INCREMENT = 45;
-var LINES_PER_LEVEL = 10;
+var LINES_PER_LEVEL = 1;
+
 
 
 var nextPieceCanvas = document.getElementById("nextPiece");
 var nextCtx = nextPieceCanvas.getContext("2d");
 var PIECE_SIZE = nextPieceCanvas.width;
 var BLOCKS_PER_ROW = 6; 
-var BLOCKS_PER_COLUMN = 5; 
+var BLOCKS_PER_COLUMN = 5;
+var SPACEBAR_CODE = "&#160;" ;
+var AMOUNT_OF_START_SPACES = 5;
 
 //Javascript char keyCodes for keyboard input 
 var LEFT = 37;
@@ -26,12 +29,15 @@ var UP = 38;
 var SHIFT = 16;
 
 
-var PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE, new T_PIECE, new J_PIECE, new L_PIECE, new O_PIECE, new DOT_PIECE()];
+var PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE(), new T_PIECE(), new J_PIECE(), new L_PIECE(), new O_PIECE(), new DOT_PIECE()];
 
 
 var blockLines = true;
 var shift = false;
+
 var level = 1;
+var score = 12910;
+
 
 function BoardView(model){
     
@@ -195,7 +201,7 @@ function updateGameSpeed(){
 
     if(linesCleared >= LINES_PER_LEVEL){
         level++;
-        document.getElementById("level").innerHTML = "Level: "+ level ;
+        document.getElementById("level").innerHTML = "Level:"+addSpaces(level) + level;
     }
     
     while(linesCleared >= LINES_PER_LEVEL){
@@ -220,15 +226,50 @@ function setUpPiece(piece, nextPiece){
 };
 
 
+function addSpaces(amount){
+    var digits = getDigits(amount);
+    var amount = AMOUNT_OF_START_SPACES - digits + 1;
+
+
+    var space = "";
+        
+    for(var i = 0; i < amount; i++){ //adds one more "space" 
+        space += SPACEBAR_CODE;
+    }
+
+    return space;
+};
+
+
+/* Returns the amount of digits in a number */
+function getDigits(value){
+    if(value < 10){
+        return 1;
+    }
+    return getDigits(value / 10) + 1;
+};
+
 
 var model = new TetrisBoard();
-var piece = new I_PIECE();//getNewPiece();
+var piece = getNewPiece();
 var boardView = new BoardView(model);
-var nextPiece = new T_PIECE();//getNewPiece();
+var nextPiece = getNewPiece();
 setUpPiece(piece, nextPiece);
-
 boardView.displayBoard(0, model.getMiniBoard(), nextCtx);
 document.addEventListener('keydown', keyListener);
-render();
+
+
+// document.getElementById("level").innerHTML = "Level: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;"+ level;
+
+document.getElementById("level").innerHTML = "Level:"+addSpaces(level) + level;
+
+// document.getElementById("score").innerHTML = "Score: &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;"+ score;
+
+document.getElementById("score").innerHTML = "Score:"+addSpaces(score) + score;
+
+document.getElementById("lines").innerHTML = "Lines:"+ addSpaces(lines) + lines;
+
+//render();
+
 
 
