@@ -2,8 +2,16 @@
 var ROWS = 20;
 var COLUMNS = 10;
 var ROW_OFFSET = 4;
-
+var BLOCKS_PER_ROW = 6;
+var BLOCKS_PER_COLUMN = 5;
 var COLORS = ["red", "blue", "green", "plum", "purple", "skyblue", "springgreen"];
+
+//Javascript char keyCodes for keyboard input 
+var LEFT = 37;
+var RIGHT = 39;
+var DOWN = 40;
+var UP = 38;
+var SHIFT = 16;
 
 function Point(x, y){
     
@@ -463,7 +471,7 @@ function T_PIECE(){
     
 };
 
-J_PIECE.prototype = new TetrisPiece(5, 1, 1);
+J_PIECE.prototype = new TetrisPiece(0, 1, 1);
 
 function J_PIECE(){
     this.piece = [[1,0,0],
@@ -620,7 +628,7 @@ function TetrisBoard (){
         return -1;
     };
 
-    TetrisBoard.prototype.eliminateLines = function(start){
+    TetrisBoard.prototype.eliminateLines = function(start, linesCleared){
         //loop through the board starting at the bottom
 
         var clearedLines = false;
@@ -639,7 +647,9 @@ function TetrisBoard (){
             }
         }
 
-        return clearedLines;
+        //return clearedLines; Updated Thursday, January 15, 2015
+        return linesCleared;
+        
     };
 
     TetrisBoard.prototype.clearLines = function(rowArray){
