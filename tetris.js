@@ -3,37 +3,9 @@
 
 
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
-// var canvas = document.getElementById("myCanvas");
-// var ctx = canvas.getContext('2d');
-
-// var WIDTH = canvas.width;
-// var HEIGHT = canvas.height;
-
-// var GAMESPEED_INCREMENT = 45;
-// var LINES_PER_LEVEL = 1;
 
 
-
-// var nextPieceCanvas = document.getElementById("nextPiece");
-// var nextCtx = nextPieceCanvas.getContext("2d");
-// var PIECE_SIZE = nextPieceCanvas.width;
-// var BLOCKS_PER_ROW = 6; 
-// var BLOCKS_PER_COLUMN = 5;
-// var SPACEBAR_CODE = "&#160;" ;
-// var AMOUNT_OF_START_SPACES = 5;
-
-
-
-
-// var PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE(), new T_PIECE(), new J_PIECE(), new L_PIECE(), new O_PIECE(), new DOT_PIECE()];
-
-
-//var blockLines = true;
 var shift = false;
-
-// var level = 1;
-// var score = 0;
-
 
 function BoardView(model, canvasWidth, canvasHeight){
     
@@ -41,7 +13,7 @@ function BoardView(model, canvasWidth, canvasHeight){
     this.boxSizeX = canvasWidth/COLUMNS;
     this.boxSizeY = canvasHeight/ROWS;
 
-    this.blockLines = true;
+    this.blockLines = false;
 
     
     BoardView.prototype.toString = function(){
@@ -132,131 +104,6 @@ function keyListener(keyevent){
 };
 
 
-// var gameStepTime = 450;
-// var cumulatedTime = 0;
-// var frameTime = 0;
-// var lastFrameTime = Date.now();
-
-// var count = 0;
-// var cleared = false;
-// var linesCleared = 0;
-
-// var totalLinesCleared = 0;
-// var lines = 0;
-// var row;
-// //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
-// function render(){
-           
-//     requestAnimationFrame(render);
-    
-//     var time = Date.now();
-//     frameTime = time - lastFrameTime;
-//     lastFrameTime = time;
-//     cumulatedTime += frameTime;    
-
-
-//     while(cumulatedTime > gameStepTime ){
-
-//         updatePiece(piece);
-        
-//         if(shift || piece.detectBottomBound(model.getBoard())){
-//             row = model.checkRows();
-//             if(row >= ROW_OFFSET){// && (count % 2 == 0 && count != 0)){
-//                 model.eliminateLines(row); //cleared the rows first
-//                 cleared = true;
-//             }
-            
-//             boardView.displayBoard(ROW_OFFSET, model.getBoard(), ctx);
-            
-//             if(model.isGameOver()){
-//                 console.log("gameover");
-//             }
-//             else if(shift ||  (count % 2 == 0 && count != 0) || cleared){
-//                 updateGameSpeed();
-//                 swapPieces();
-//                 cleared = false; //reset clear for better sliding pieces
-//             }
-//             if(!shift)
-//                 count++;
-//             shift = false;
-//         }
-
-//         cumulatedTime -= gameStepTime;
-//     }
-//     boardView.displayBoard(ROW_OFFSET, model.getBoard(), ctx);      
-// };
-
-
-
-// function swapPieces(){
-
-    
-//     piece = nextPiece;
-//     model.erasePath(nextPiece, false);
-//     nextPiece = getNewPiece();
-//     setUpPiece(piece, nextPiece);
-//     boardView.displayBoard(0, model.getMiniBoard(), nextCtx);
-// };
-
-// function updatePiece(piece){
-//     model.erasePath(piece, true);
-//     piece.move("down", model.getBoard());
-//     model.positionPiece(piece);
-// };
-
-// function updateGameSpeed(){
-
-//     if(linesCleared >= LINES_PER_LEVEL){
-//         level++;
-//         document.getElementById("level").innerHTML = "Level:"+addSpaces(level) + level;
-//     }
-    
-//     while(linesCleared >= LINES_PER_LEVEL){
-//         totalLinesCleared += linesCleared;
-//         gameStepTime -= GAMESPEED_INCREMENT;
-//         //alert(gameStepTime);
-//         linesCleared -= LINES_PER_LEVEL;
-//     }
-// };
-
-// function getNewPiece(){
-//     return PIECES[Math.floor(Math.random()*PIECES.length)];
-// };
-
-// function setUpPiece(piece, nextPiece){
-//     piece.resetPiece();
-//     nextPiece.resetPiece();
-//     nextPiece.setDisplayPiece(model.getMiniBoard());
-//     piece.setStartPosition(ROW_OFFSET);
-//     model.positionPiece(piece);
-//     boardView.displayBoard(ROW_OFFSET, model.getBoard(), ctx);
-// };
-
-
-// function addSpaces(amount){
-//     var digits = getDigits(amount);
-//     var amount = AMOUNT_OF_START_SPACES - digits + 1;
-
-
-//     var space = "";
-        
-//     for(var i = 0; i < amount; i++){ //adds one more "space" 
-//         space += SPACEBAR_CODE;
-//     }
-
-//     return space;
-// };
-
-
-// /* Returns the amount of digits in a number */
-// function getDigits(value){
-//     if(value < 10){
-//         return 1;
-//     }
-//     return getDigits(value / 10) + 1;
-// };
-
-
 
 function TetrisGame(){
     this.gameCanvas = document.getElementById("gameCanvas");
@@ -264,9 +111,10 @@ function TetrisGame(){
     this.WIDTH = this.gameCanvas.width;
     this.HEIGHT = this.gameCanvas.height;
     this.GAMESPEED_INCREMENT = 45;
-    this.LINES_PER_LEVEL = 2;
+    this.LINES_PER_LEVEL = 3;
     this.AMOUNT_OF_START_SPACES = 5;
     this.SPACEBAR_CODE = "&#160;" ;
+    this.DEFAULT_PIECE_SIZE = 4;
 
 
     //To calculate the gametime to update the score, amount of lines cleared and 
@@ -288,6 +136,7 @@ function TetrisGame(){
     this.score = 0; 
 
     this.PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE(), new T_PIECE(), new J_PIECE(), new L_PIECE(), new O_PIECE(), new DOT_PIECE()];
+
 
     //For the tetris preview piece 
     this.nextPieceCanvas = document.getElementById("nextPiece");
@@ -359,37 +208,7 @@ function TetrisGame(){
     };
 
     
-    TetrisGame.prototype.updateGameSpeed = function() {
-        var count = 0;
-        var tempLines = this.linesCleared;
-        if(this.linesCleared >= this.LINES_PER_LEVEL || this.totalLinesCleared % this.LINES_PER_LEVEL == 0){
-            // this.level++;
-            // document.getElementById("level").innerHTML = "Level:"+this.addSpaces(this.level) + this.level;
 
-            this.totalLinesCleared += this.linesCleared;
-            while(this.linesCleared >= this.LINES_PER_LEVEL){
-                count++;
-            //this.totalLinesCleared += this.linesCleared;
-            this.gameStepTime -= this.GAMESPEED_INCREMENT;
-            //alert(gameStepTime);
-            this.linesCleared -= this.LINES_PER_LEVEL;
-            
-            }
-
-            //Thursday, January 15, 2015
-            // NEED TO UPDATE DISPLAYING TOTAL LINES CLEARED        
-            this.level+=count;           
-            document.getElementById("level").innerHTML = "Level:"+this.addSpaces(this.level) + this.level;
-            alert(this.totalLinesCleared);
-
-            document.getElementById("lines").innerHTML = "Lines:"+this.addSpaces(this.totalLinesCleared) + this.totalLinesCleared;
-            if(this.score == 0)
-                this.score = 1;
-            this.score = this.score + this.score*tempLines;
-            document.getElementById("score").innerHTML = "Score:" + this.addSpaces(this.score)+this.score;
-            
-        }
-    };
 
     TetrisGame.prototype.getDigits = function(value){
         if(value < 10){
@@ -440,6 +259,21 @@ function TetrisGame(){
         this.view.displayBoard(ROW_OFFSET, this.model.getBoard(), this.gameContext);
     };
 
+    TetrisGame.prototype.updateGameSpeed = function() {
+        
+        var count = 0;
+        
+        while(this.lines >= this.LINES_PER_LEVEL){
+            count++;
+            this.gameStepTime -= this.GAMESPEED_INCREMENT;
+            this.lines -= this.LINES_PER_LEVEL;            
+        }
+        
+        this.level += count;
+        this.updateHTMLLevel(this.level);
+
+    };
+
     TetrisGame.prototype.run = function(){
         
         requestAnimationFrame(this.run.bind(this));
@@ -454,25 +288,27 @@ function TetrisGame(){
             
             if(shift || this.piece.detectBottomBound(this.model.getBoard())){
                 this.row = this.model.checkRows();
-                if(this.row >= ROW_OFFSET){// && (count % 2 == 0 && count != 0)){
-                    //Where linesCleared to UPDATE SCORE Thursday, January 15, 2015
-                    this.linesCleared = this.model.eliminateLines(this.row, this.linesCleared); //cleared the rows first
-                    //alert(this.linesCleared);
+                if(this.row >= ROW_OFFSET){
+                    this.linesCleared = this.model.eliminateLines(this.row); //cleared the rows first
+                    this.lines += this.linesCleared;
+                    this.totalLinesCleared += this.linesCleared;
+                    this.updateHTMLLines(this.totalLinesCleared);                   
                     this.cleared = true;
-                }
-                
+                }                               
                 this.view.displayBoard(ROW_OFFSET, this.model.getBoard(), this.gameContext);
                 
                 if(this.model.isGameOver()){
                     console.log("gameover");
                 }
                 else if(shift ||  (this.count % 2 == 0 && this.count != 0) || this.cleared){
-                    //Thursday, January 15, 2015
-                    // NEED TO UPDATE DISPLAYING TOTAL LINES CLEARED
                     this.updateGameSpeed();
                     this.swapPieces();
                     this.cleared = false; //reset clear for better sliding pieces
                 }
+
+                this.updateHTMLScore(this.linesCleared);
+                this.linesCleared = 0;
+                
                 if(!shift)
                     this.count++;
                 shift = false;
@@ -485,17 +321,19 @@ function TetrisGame(){
     };
     
 
-    TetrisGame.prototype.getLines = function(){
-        return this.lines;
+    TetrisGame.prototype.updateHTMLLines = function(totalLinesCleared){
+        document.getElementById("lines").innerHTML = "Lines:"+this.addSpaces(totalLinesCleared) + totalLinesCleared;
     };
 
-    TetrisGame.prototype.getScore = function(){
-        return this.score;
+    TetrisGame.prototype.updateHTMLLevel = function(level){
+        document.getElementById("level").innerHTML = "Level:"+this.addSpaces(level) + level;
     };
 
-    TetrisGame.prototype.getLevel = function(){
-        return this.level;
+    TetrisGame.prototype.updateHTMLScore = function(tempLines){        
+        this.score = this.score + COLUMNS*tempLines + this.piece.getTotalPoints();
+        document.getElementById("score").innerHTML = "Score:" + this.addSpaces(this.score)+this.score;  
     };
+    
 
     TetrisGame.prototype.getModel = function(){
         return this.model;
@@ -513,6 +351,14 @@ function TetrisGame(){
     TetrisGame.prototype.getCTX = function(){
         return this.gameContext;
     };
+
+    TetrisGame.prototype.setScoreBoard = function(){
+        document.getElementById("level").innerHTML = "Level:"+this.addSpaces(this.level) + this.level;
+        document.getElementById("score").innerHTML = "Score:"+this.addSpaces(this.score) + this.score;
+        document.getElementById("lines").innerHTML = "Lines:"+ this.addSpaces(this.totalLinesCleared) + this.totalLinesCleared;
+    };
+
+    
     
 }; //End of TetrisGame class 
 
@@ -543,10 +389,7 @@ function TetrisGame(){
 var tetrisgame = new TetrisGame();
 //document.addEventListener('keydown', tetrisgame.updateKeys());
 document.addEventListener('keydown', keyListener);
-document.getElementById("level").innerHTML = "Level:"+tetrisgame.addSpaces(tetrisgame.getLevel()) + tetrisgame.getLevel()
-document.getElementById("score").innerHTML = "Score:"+tetrisgame.addSpaces(tetrisgame.getScore()) + tetrisgame.getScore()
-document.getElementById("lines").innerHTML = "Lines:"+ tetrisgame.addSpaces(tetrisgame.getLines()) +
-    tetrisgame.getLines();
+tetrisgame.setScoreBoard();
 tetrisgame.run();
 
 

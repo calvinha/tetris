@@ -91,6 +91,7 @@ function TetrisPiece (colorIndex,  x , y){
     
     this.pointsArray = [];
     this.displayArray = [];
+    //The rotation matrix 
     this.counterClockArray = [[0, 1],[-1, 0]];
     this.setDisplay = false;
     this.filled = false;
@@ -392,6 +393,9 @@ function TetrisPiece (colorIndex,  x , y){
         return this.displayArray;
     };
 
+    TetrisPiece.prototype.getTotalPoints = function(){
+        return this.pointsArray.length;
+    };
 
 };
 
@@ -628,10 +632,11 @@ function TetrisBoard (){
         return -1;
     };
 
-    TetrisBoard.prototype.eliminateLines = function(start, linesCleared){
+    TetrisBoard.prototype.eliminateLines = function(start){
         //loop through the board starting at the bottom
 
         var clearedLines = false;
+        var linesCleared = 0;
         var rowArray = [];
         
         for(var i = start; i >= (0 + ROW_OFFSET); i--){
