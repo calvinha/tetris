@@ -404,7 +404,7 @@ function TetrisPiece (colorIndex,  x , y){
 
 
 
-Z_PIECE.prototype = new TetrisPiece(5, 0 ,1);
+Z_PIECE.prototype = new TetrisPiece(0, 0 ,1);
 
 function Z_PIECE (){
     this.piece =  [[1,1,0],
@@ -416,7 +416,7 @@ function Z_PIECE (){
     
 };
 
-I_PIECE.prototype = new TetrisPiece(5, 1, 0);
+I_PIECE.prototype = new TetrisPiece(1, 1, 0);
 
 function I_PIECE(){
     this.piece = [[1],
@@ -437,7 +437,7 @@ function I_PIECE(){
     // };
 };
 
-DOT_PIECE.prototype = new TetrisPiece(5, undefined, undefined);
+DOT_PIECE.prototype = new TetrisPiece(1, undefined, undefined);
 
 function DOT_PIECE(){
     this.piece = [1];
@@ -450,7 +450,7 @@ function DOT_PIECE(){
     };
 };
 
-S_PIECE.prototype = new TetrisPiece(5, 0, 1);
+S_PIECE.prototype = new TetrisPiece(2, 0, 1);
 
 function S_PIECE(){
     this.piece = [[0,1,1],
@@ -461,7 +461,7 @@ function S_PIECE(){
     };
 };
 
-T_PIECE.prototype = new TetrisPiece(5, 1, 1);
+T_PIECE.prototype = new TetrisPiece(3, 1, 1);
 
 
 function T_PIECE(){
@@ -475,7 +475,7 @@ function T_PIECE(){
     
 };
 
-J_PIECE.prototype = new TetrisPiece(0, 1, 1);
+J_PIECE.prototype = new TetrisPiece(4, 1, 1);
 
 function J_PIECE(){
     this.piece = [[1,0,0],
@@ -500,7 +500,7 @@ function L_PIECE(){
     };
 };
 
-O_PIECE.prototype = new TetrisPiece(5, undefined, undefined );
+O_PIECE.prototype = new TetrisPiece(6, undefined, undefined );
 
 function O_PIECE(){
     this.piece = [[1,1],
@@ -540,7 +540,7 @@ function TetrisBoard (){
         }
     }
 
-    //For
+    //For the mini display board of the next tetris piece 
     this.miniBoard = [BLOCKS_PER_ROW];
     
     for(var i = 0; i < BLOCKS_PER_ROW; i++){
@@ -564,10 +564,6 @@ function TetrisBoard (){
     //     }
     // }
 
-    // this.board[ROWS+ROW_OFFSET-3][3] = 5;
-    // this.board[ROWS+ROW_OFFSET-3][2] = 5;
-    // this.board[ROWS+ROW_OFFSET-3][1] = 5;
-    //     this.board[ROWS+ROW_OFFSET-3][4] = 5;
 
     
     /*Print the board*/

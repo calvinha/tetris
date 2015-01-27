@@ -8,6 +8,7 @@
 
 .fontClass{
     font-family: Tahoma, Geneva, sans-serif; /*Tahoma*/
+    /* font-family: Courier; */
     color: #CACACA;
 }
 
@@ -32,6 +33,10 @@
     display: inline-block;
     vertical-align: top;
     /*margin-left: 200*/
+}
+
+#gameCanvas {
+    position:relative;
 }
 
 #menu {
