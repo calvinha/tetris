@@ -13,6 +13,8 @@ var DOWN = 40;
 var UP = 38;
 var SHIFT = 16;
 
+
+//Generic Point class obtained and modified from http://upshots.org/javascript/javascript-point-class
 function Point(x, y){
     
     this.x = x || 0;
