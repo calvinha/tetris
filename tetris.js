@@ -549,26 +549,6 @@ function getMousePosition(e){
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
 
-
-    // for(var i = 0; i < buttonsArray.length; i++){
-    //     var myButton = buttonsArray[i];
-    //     if(myButton.containsMousePoint(x,y) && !clicked){
-    //         myButton.changeHover(true);
-    //         document.body.style.cursor = "pointer";
-    //         if(myButton.isStartButton())
-    //             gameCanvas.addEventListener("click", setupGame, false);           
-    //     }
-    //     else if(!clicked){
-    //         //May not need the line below
-    //         if(myButton.isStartButton()){
-    //             gameCanvas.removeEventListener("click", setupGame, false);
-    //         }
-    //         myButton.changeHover(false);
-    //         document.body.style.cursor = "default";
-    //     }
-    //     myButton.draw();
-    // }
-
     var buttonHover = true;
     for(var i = 0; i < buttonsArray.length; i++){
         
@@ -596,36 +576,6 @@ function getMousePosition(e){
         }
         myButton.draw();
     }
-
-    // if(button.containsMousePoint(x,y) && !clicked){
-    //     button.changeHover(true);
-    //     document.body.style.cursor = "pointer";
-    //     if(button.isStartButton())
-    //         gameCanvas.addEventListener("click", setupGame, false);           
-    // }
-    // else if(!clicked){
-    //     //May not need the line below
-    //     if(button.isStartButton()){
-    //         gameCanvas.removeEventListener("click", setupGame, false);
-    //     }
-    //     button.changeHover(false);
-    //     document.body.style.cursor = "default";
-    // }
-    // button.draw();
-
-    
-    // if(createPieceButton.containsMousePoint(x,y) && !clicked ){
-    //     createPieceButton.changeHover(true);
-    //     document.body.style.cursor = "pointer";
-
-    // }
-    // else if(!clicked  && !button.containsMousePoint(x,y)){
-
-    //     createPieceButton.changeHover(false);
-    //     document.body.style.cursor = "default";
-    // }
-    // createPieceButton.draw();
-
 };
                 
 
