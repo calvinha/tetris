@@ -323,6 +323,7 @@ function TetrisGame(){
         this.view.displayBoard(0, this.model.getMiniBoard(), this.nextCtx);
         this.run();
     }
+    
 }; //End of TetrisGame class 
 
 
@@ -485,7 +486,6 @@ var createPieceButton = menuscreen.getCreatePieceButton();
 createPieceButton.draw();
 
 var buttonsArray = [button, createPieceButton];
-
 var clicked = false;
 
 function setupGame(){
@@ -581,3 +581,132 @@ function getMousePosition(e){
 
 gameCanvas.addEventListener("mousemove", getMousePosition, false);
 
+// function Button( x, y, w, h, radius, text, xCoord, yCoord){
+//     this.x = x;
+//     this.y = y;
+//     this.w = w;
+//     this.h = h;
+//     this.xCoord = xCoord;
+//     this.yCoord = yCoord;
+//     this.radius = radius;
+//     this.text = text;
+//     this.DEFAULT_COLOR = "#E8E8E8"
+//     this.HOVER_COLOR = "#008DFF"
+//     this.isHovering = false;
+//     this.clicked = false;
+//     this.font = "32px Tahoma";
+//     this.TEXT_X_OFFSET = 54;
+//     this.TEXT_Y_OFFSET = 50;
+    
+    
+//     Button.prototype.draw = function(){
+
+//         var r = this.x + this.w;
+//         var b = this.y + this.h;
+        
+//         gameContext.beginPath();
+//         gameContext.strokeStyle="black";
+//         gameContext.lineWidth="3"; //3
+//         gameContext.moveTo(this.x+radius, this.y);
+//         gameContext.lineTo(r - this.radius, this.y);
+//         gameContext.quadraticCurveTo(r, this.y, r, this.y + this.radius);
+//         gameContext.lineTo(r, this.y + this.h - this.radius);
+//         gameContext.quadraticCurveTo(r, b, r - this.radius, b);
+//         gameContext.lineTo(this.x + this.radius, b);
+//         gameContext.quadraticCurveTo(this.x, b, this.x, b - this.radius);
+//         gameContext.lineTo(this.x, this.y + this.radius);
+//         gameContext.quadraticCurveTo(this.x, this.y, this.x + this.radius, this.y);
+//         gameContext.stroke();
+        
+//         if(this.isHovering)
+//             gameContext.fillStyle=this.HOVER_COLOR;
+//         else
+//             gameContext.fillStyle=this.DEFAULT_COLOR;
+//         gameContext.fill();
+        
+
+//         //Draw the text
+//         gameContext.fillStyle = "black";
+//         gameContext.font=this.font;
+//         var fontWidth = gameContext.measureText(this.text).width;
+//         var textX = (this.w-fontWidth)/2;
+//         gameContext.fillText(this.text, textX+this.TEXT_X_OFFSET, this.y + this.TEXT_Y_OFFSET);
+//     };
+
+    
+
+//     Button.prototype.containsMousePoint = function(pointX,pointY){        
+//         return  (this.x <= pointX) && (this.x + this.w >= pointX) &&
+//             (this.y <= pointY) && (this.y + this.h >= pointY);
+//     };
+
+//     Button.prototype.getLocation = function(){
+//         return "x: " + this.x + " || y: "+ this.y + "|| w: "+this.w + "|| h: "+this.h;
+//     };
+
+//     Button.prototype.isHover = function(){
+//         return this.isHovering;
+//     };
+
+//     Button.prototype.changeHover = function(hover){
+//         this.isHovering = hover;
+
+//     };
+
+//     Button.prototype.isStartButton = function(){
+//         return this.text == "Start Game";
+//     };
+
+//     Button.prototype.isCreatePieceButton = function(){
+//         return this.text == "Create Piece";
+//     }
+
+//     Button.prototype.getText = function(){
+//         return this.text;
+//     };
+
+//     Button.prototype.isClicked = function(){
+//         return this.clicked;
+//     };
+
+//     Button.prototype.changeClick = function(){
+//         this.clicked = !this.clicked;
+//     };
+
+    
+// };
+
+//     this.BUTTON_WIDTH_PERCENTAGE = 0.65;
+//     this.BUTTON_HEIGHT= 75;
+//     this.BUTTON_SPACING = 35;
+//     this.TOTAL_BUTTONS = 2;
+//     this.BUTTON_TOTAL_HEIGHT_PERCENTAGE = 0.90;
+//     this.FONT = "28px Tahoma";
+//     this.TOTAL_CREATE_PIECES = 9;
+//     this.PIECES_OFFSET =10;
+//     this.startButton;
+//     this.createPieceButton;
+//     this.menuButtons = [];
+//     this.pieceButtons = [];
+
+//     TetrisMenuScreen.prototype.createPieces = function(){
+//         var rowsColumns = Math.sqrt(this.TOTAL_CREATE_PIECES);
+//         var w = CANVAS_WIDTH*0.20;
+//         var h = w;
+//         var totalWidth = rowsColumns*w;
+//         var x  = (CANVAS_WIDTH - totalWidth)/2;
+//         var startX = x;
+//         var y  = (CANVAS_HEIGHT - totalWidth)/2;
+
+            
+//         for(var i = 0; i < rowsColumns; i++){
+//             for(var j = 0; j < rowsColumns; j++){
+//                 var button = new Button(x, y, w, h, 3, "", i, j)
+//                 this.pieceButtons.push(button);
+//                 button.draw();
+//                 x = x + w + this.PIECES_OFFSET;
+//             }
+//             x = startX;
+//             y = y + h + this.PIECES_OFFSET;
+//         }
+//     };
