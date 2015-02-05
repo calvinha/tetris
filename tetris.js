@@ -327,75 +327,6 @@ function TetrisGame(){
 }; //End of TetrisGame class 
 
 
-function TetrisMenuScreen (){
-    this.BUTTON_WIDTH_PERCENTAGE = 0.65;
-    this.BUTTON_HEIGHT= 75;
-    this.BUTTON_SPACING = 35;
-    this.TOTAL_BUTTONS = 2;
-    this.BUTTON_TOTAL_HEIGHT_PERCENTAGE = 0.90;
-    this.FONT = "28px Tahoma";
-    this.startButton;
-    this.createPieceButton; 
-
-
-    TetrisMenuScreen.prototype.drawMenuScreen = function(){
-        //gameContext.globalAlpha=0.3;
-        gameContext.fillStyle="#CACACA";
-        gameContext.fillRect(0, 0,CANVAS_WIDTH, CANVAS_HEIGHT);
-        //gameContext.globalAlpha=0.0;
-    };
-
-    TetrisMenuScreen.prototype.createMenuButtons = function(y, radius, text, startPiece){
-        //http://www.scriptol.com/html5/canvas/rounded-rectangle.php
-        var w = CANVAS_WIDTH*this.BUTTON_WIDTH_PERCENTAGE;
-        var h = this.BUTTON_HEIGHT;
-
-        var x = (CANVAS_WIDTH - w)/2;
-        var r = x + w;
-        var b = y + h;
-        if(startPiece){
-            this.startButton = new Button(x,y,w,h, radius, text);
-        }       
-        else{
-            this.createPieceButton = new Button(x,y,w,h, radius, text);
-        }
-
-    };
-
-    TetrisMenuScreen.prototype.defineButtons = function(){
-
-        var totalHeight = this.TOTAL_BUTTONS*this.BUTTON_HEIGHT+(this.TOTAL_BUTTONS-1)*this.BUTTON_SPACING;
-        var startY = (CANVAS_HEIGHT - totalHeight)/2;
-        
-        for(var i = 0; i < this.TOTAL_BUTTONS; i++){
-
-            if(i % 2 == 0){
-                this.createMenuButtons(startY, 10, "Start Game", true);
-            }
-            else{
-                this.createMenuButtons(startY, 10, "Create Piece", false);
-            }
-            startY = startY + this.BUTTON_HEIGHT + this.BUTTON_SPACING;
-
-        }
-    };
-
-    TetrisMenuScreen.prototype.getStartButton = function(){
-        return this.startButton;
-    };
-
-    TetrisMenuScreen.prototype.getCreatePieceButton = function(){
-        return this.createPieceButton;
-    };
-
-
-    TetrisMenuScreen.prototype.check = function(e){
-        var rect = canvas.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-    };
-};
-
 
 function Button( x, y, w, h, radius, text){
     this.x = x;
@@ -477,15 +408,124 @@ function Button( x, y, w, h, radius, text){
     
 };
 
+function TetrisMenuScreen (){
+    this.BUTTON_WIDTH_PERCENTAGE = 0.65;
+    this.BUTTON_HEIGHT= 75;
+    this.BUTTON_SPACING = 35;
+    this.TOTAL_BUTTONS = 2;
+    this.BUTTON_TOTAL_HEIGHT_PERCENTAGE = 0.90;
+    this.FONT = "28px Tahoma";
+    this.startButton;
+    this.createPieceButton;
+    this.menuButtons = [];
+
+
+    TetrisMenuScreen.prototype.drawMenuScreen = function(){
+        //gameContext.globalAlpha=0.3;
+        gameContext.fillStyle="#CACACA";
+        gameContext.fillRect(0, 0,CANVAS_WIDTH, CANVAS_HEIGHT);
+        //gameContext.globalAlpha=0.0;
+    };
+
+    TetrisMenuScreen.prototype.createMenuButtons = function(y, radius, text, startPiece){
+        //http://www.scriptol.com/html5/canvas/rounded-rectangle.php
+        var w = CANVAS_WIDTH*this.BUTTON_WIDTH_PERCENTAGE;
+        var h = this.BUTTON_HEIGHT;
+
+        var x = (CANVAS_WIDTH - w)/2;
+        var r = x + w;
+        var b = y + h;
+        if(startPiece){
+            this.startButton = new Button(x,y,w,h, radius, text);
+        }       
+        else{
+            this.createPieceButton = new Button(x,y,w,h, radius, text);
+        }
+
+    };
+
+    TetrisMenuScreen.prototype.defineButtons = function(){
+
+        var totalHeight = this.TOTAL_BUTTONS*this.BUTTON_HEIGHT+(this.TOTAL_BUTTONS-1)*this.BUTTON_SPACING;
+        var startY = (CANVAS_HEIGHT - totalHeight)/2;
+        
+        for(var i = 0; i < this.TOTAL_BUTTONS; i++){
+
+            if(i % 2 == 0){
+                this.createMenuButtons(startY, 10, "Start Game", true);
+            }
+            else{
+                this.createMenuButtons(startY, 10, "Create Piece", false);
+            }
+            startY = startY + this.BUTTON_HEIGHT + this.BUTTON_SPACING;
+
+        }
+    };
+
+    TetrisMenuScreen.prototype.getStartButton = function(){
+        return this.startButton;
+    };
+
+    TetrisMenuScreen.prototype.getCreatePieceButton = function(){
+        return this.createPieceButton;
+    };
+
+    TetrisMenuScreen.prototype.getMousePos = function(e){
+        var rect = gameCanvas.getBoundingClientRect();
+        
+        //http://stackoverflow.com/questions/17130395/canvas-html5-real-mouse-position
+        //Get the x and y positions of the mouse on the Canvas with the offset to webpage
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+
+        var buttonHover = true;
+        var buttonsArray = [this.startButton, this.createPieceButton];
+
+        
+        for(var i = 0; i < buttonsArray.length; i++){
+            
+            var myButton = buttonsArray[i];
+            
+            if(myButton.containsMousePoint(x,y) && !clicked){
+
+                myButton.changeHover(true);
+                document.body.style.cursor = "pointer";
+                if(myButton.isStartButton())
+                    gameCanvas.addEventListener("click", setupGame, false);        
+                
+                for(var j = i + 1; j < buttonsArray.length; j++){
+                    var otherButton = buttonsArray[j];                    
+                    buttonHover = otherButton.containsMousePoint(x,y);
+                }            
+            }  
+            else if(!clicked && buttonHover){
+                //May not need the line below
+                if(button.isStartButton()){
+                    gameCanvas.removeEventListener("click", setupGame, false);
+                }
+                myButton.changeHover(false);
+                document.body.style.cursor = "default";
+            }
+            myButton.draw();
+        }
+
+
+    };
+
+    TetrisMenuScreen.prototype.getMenuButtons = function(){
+        return this.menuButtons
+    };
+
+    this.defineButtons();
+    this.startButton.draw();
+    this.createPieceButton.draw();
+    this.menuButtons.push(this.startButton, this.createPieceButton);
+};
+
+
 
 var menuscreen = new TetrisMenuScreen();
-menuscreen.defineButtons( );
-var button = menuscreen.getStartButton();
-button.draw();
-var createPieceButton = menuscreen.getCreatePieceButton();
-createPieceButton.draw();
-
-var buttonsArray = [button, createPieceButton];
+var buttonsArray = menuscreen.getMenuButtons();
 var clicked = false;
 
 function setupGame(){
@@ -494,7 +534,7 @@ function setupGame(){
     document.body.style.cursor = "default";
 
     //To remove the "invisible" button, so users can no longer see the cursor changes
-    gameCanvas.removeEventListener("mousemove", getMousePosition, false);
+    gameCanvas.removeEventListener("mousemove", checkMousePosition,  false);
 
     //To disable the mouse click on the "invisible" button
     gameCanvas.removeEventListener("click", setupGame, false);
@@ -541,7 +581,7 @@ function setupGame(){
 };
 
 
-function getMousePosition(e){
+function checkMousePosition(e){
     var rect = gameCanvas.getBoundingClientRect();
     
     //http://stackoverflow.com/questions/17130395/canvas-html5-real-mouse-position
@@ -568,7 +608,7 @@ function getMousePosition(e){
         }  
         else if(!clicked && buttonHover){
             //May not need the line below
-            if(button.isStartButton()){
+            if(myButton.isStartButton()){
                 gameCanvas.removeEventListener("click", setupGame, false);
             }
             myButton.changeHover(false);
@@ -579,7 +619,12 @@ function getMousePosition(e){
 };
                 
 
-gameCanvas.addEventListener("mousemove", getMousePosition, false);
+gameCanvas.addEventListener("mousemove", checkMousePosition, false);
+
+
+// var blah = gameCanvas.addEventListener("mousemove", function (e){
+//    menuscreen.getMousePos(e)
+// }, false);
 
 // function Button( x, y, w, h, radius, text, xCoord, yCoord){
 //     this.x = x;
