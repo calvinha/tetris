@@ -401,23 +401,34 @@ function Button( x, y, w, h, radius, text){
         return this.text == "Start Game";
     }
 
+    Button.prototype.isCreatePieceButton = function(){
+        return this.text == "Create Piece";
+    };
+
     Button.prototype.getText = function(){
         return this.text;
     };
 
+    Button.prototype.getX = function(){
+        return this.x;
+    };
     
 };
 
 function TetrisMenuScreen (){
     this.BUTTON_WIDTH_PERCENTAGE = 0.65;
     this.BUTTON_HEIGHT= 75;
-    this.BUTTON_SPACING = 35;
+    this.BUTTON_SPACING = 25;
     this.TOTAL_BUTTONS = 2;
     this.BUTTON_TOTAL_HEIGHT_PERCENTAGE = 0.90;
+    this.TOTAL_CREATE_PIECES = 9;
+    this.PIECES_OFFSET = 10; 
     this.FONT = "28px Tahoma";
     this.startButton;
     this.createPieceButton;
     this.menuButtons = [];
+    this.pieceButtons = [];
+   
 
 
     TetrisMenuScreen.prototype.drawMenuScreen = function(){
@@ -516,20 +527,41 @@ function TetrisMenuScreen (){
         return this.menuButtons
     };
 
+    TetrisMenuScreen.prototype.createPieces = function(){
+        
+        var rowsColumns = Math.sqrt(this.TOTAL_CREATE_PIECES);
+        var w = CANVAS_WIDTH*0.20;
+        var h = w;
+        var totalWidth = rowsColumns*w;
+        var x  = (CANVAS_WIDTH - totalWidth)/2;
+        var startX = x;
+        var y  = (CANVAS_HEIGHT - totalWidth)/2;
+
+            
+        for(var i = 0; i < rowsColumns; i++){
+            for(var j = 0; j < rowsColumns; j++){
+                var button = new Button(x, y, w, h, 3, "");
+                this.pieceButtons.push(button);
+                button.draw();
+                x = x + w + this.PIECES_OFFSET;
+            }
+            x = startX;
+            y = y + h + this.PIECES_OFFSET;
+        }
+    };
+
     this.defineButtons();
     this.startButton.draw();
     this.createPieceButton.draw();
     this.menuButtons.push(this.startButton, this.createPieceButton);
 };
 
-
-
 var menuscreen = new TetrisMenuScreen();
 var buttonsArray = menuscreen.getMenuButtons();
 var clicked = false;
 
-function setupGame(){
-
+function updateListeners(startGame){
+    
     //Switch back to the default cursor
     document.body.style.cursor = "default";
 
@@ -537,8 +569,29 @@ function setupGame(){
     gameCanvas.removeEventListener("mousemove", checkMousePosition,  false);
 
     //To disable the mouse click on the "invisible" button
-    gameCanvas.removeEventListener("click", setupGame, false);
+    if(startGame)
+        gameCanvas.removeEventListener("click", setupGame, false);
+    else
+        gameCanvas.removeEventListener("click", setUpPiece, false);
+    
+    //Clear the screen
+    gameContext.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+}
+
+function setupGame(){
+
+    // //Switch back to the default cursor
+    // document.body.style.cursor = "default";
+
+    // //To remove the "invisible" button, so users can no longer see the cursor changes
+    // gameCanvas.removeEventListener("mousemove", checkMousePosition,  false);
+
+    // //To disable the mouse click on the "invisible" button
+    // gameCanvas.removeEventListener("click", setupGame, false);
+
+    
+    updateListeners(true);
     
     var tg = new TetrisGame();
     tg.setScoreBoard();
@@ -581,6 +634,13 @@ function setupGame(){
 };
 
 
+function setUpPiece(){
+
+    updateListeners(false);
+    menuscreen.createPieces();
+};
+
+
 function checkMousePosition(e){
     var rect = gameCanvas.getBoundingClientRect();
     
@@ -594,22 +654,31 @@ function checkMousePosition(e){
         
         var myButton = buttonsArray[i];
         
+        //May not need !clicked
         if(myButton.containsMousePoint(x,y) && !clicked){
 
             myButton.changeHover(true);
             document.body.style.cursor = "pointer";
             if(myButton.isStartButton())
-                gameCanvas.addEventListener("click", setupGame, false);        
+                gameCanvas.addEventListener("click", setupGame, false);
+            else if(myButton.isCreatePieceButton() && document.body.style.cursor == "pointer"){
+                gameCanvas.addEventListener("click", setUpPiece, false);
+            }
         
             for(var j = i + 1; j < buttonsArray.length; j++){
                 var otherButton = buttonsArray[j];                    
                 buttonHover = otherButton.containsMousePoint(x,y);
             }            
-        }  
-        else if(!clicked && buttonHover){
+        }
+
+        //May not need !clicked
+        else if(buttonHover && !clicked){
             //May not need the line below
             if(myButton.isStartButton()){
                 gameCanvas.removeEventListener("click", setupGame, false);
+            }
+            else if(myButton.isCreatePieceButton()){
+                gameCanvas.removeEventListener("click", setUpPiece, false);
             }
             myButton.changeHover(false);
             document.body.style.cursor = "default";
