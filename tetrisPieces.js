@@ -1,3 +1,8 @@
+/*
+  @author Calvin Ha
+
+*/
+
 
 var ROWS = 20;
 var COLUMNS = 10;
@@ -13,8 +18,11 @@ var DOWN = 40;
 var UP = 38;
 var SHIFT = 16;
 
+//Linear algebra rotation matrix for the tetris pieces  
+//https://www.youtube.com/watch?v=Atlr5vvdchY
 
 //Generic Point class obtained and modified from http://upshots.org/javascript/javascript-point-class
+
 function Point(x, y){
     
     this.x = x || 0;

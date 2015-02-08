@@ -1,7 +1,11 @@
+/*
+  @author Calvin Ha 
 
+*/
 
+//I used this source for gamesteptime speed and  increment functions to
+//calculate when to increase the drop speed of a tetris piece
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
-
 
 var shift = false;
 var definedCreatePiece = false;
@@ -85,7 +89,6 @@ function TetrisGame(){
 
 
     //To calculate the gametime to update the score, amount of lines cleared and 
-    //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
     this.gameStepTime = 450;
     this.cumulatedTime = 0;
     this.frameTime = 0;
@@ -104,18 +107,14 @@ function TetrisGame(){
     this.score = 0; 
 
     this.PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE(), new T_PIECE(), new J_PIECE(), new L_PIECE(), new O_PIECE(), new DOT_PIECE()];
-    //this.PIECES = [];
 
     //For the tetris preview piece 
     this.nextPieceCanvas = document.getElementById("nextPiece");
     this.nextCtx = this.nextPieceCanvas.getContext("2d");
     this.PIECE_SIZE = this.nextPieceCanvas.width;
-
     
     this.model = new TetrisBoard();
     this.view = new BoardView(this.model, CANVAS_WIDTH, CANVAS_HEIGHT);
-//    this.piece = this.PIECES[Math.floor(Math.random()*this.PIECES.length)];
-//    this.nextPiece = this.PIECES[Math.floor(Math.random()*this.PIECES.length)];
     
 
     TetrisGame.prototype.setUpPiece = function(piece, nextPiece){
@@ -127,9 +126,6 @@ function TetrisGame(){
         this.view.displayBoard(ROW_OFFSET, this.model.getBoard(), gameContext);
 
     };
-    
-   // this.setUpPiece(this.piece, this.nextPiece);
-   // this.view.displayBoard(0, this.model.getMiniBoard(), this.nextCtx);
        
     TetrisGame.prototype.getNewPiece = function(){
         return this.PIECES[Math.floor(Math.random()*this.PIECES.length)];
@@ -185,34 +181,6 @@ function TetrisGame(){
         }
 
         return space;
-    };
-
-    TetrisGame.prototype.updateKeys = function(){
-        
-        var self = this;
-        document.onkeydown = function(keyevent){
-            self.model.erasePath(self.piece, true);
-            var board = self.model.getBoard();
-
-            switch(keyevent.keyCode){
-            case self.LEFT:
-                self.piece.move("left", board); break;
-            case self.RIGHT:
-                self.piece.move("right", board); break;
-            case self.UP:
-                self.piece.rotateCounterClock(board); break;       
-            case self.DOWN:   
-                self.piece.move("down", board); break;
-            case self.SHIFT:
-                self.piece.dropPiece(board); shift = true; break;
-            }
-            //http://stackoverflow.com/questions/8916620/disable-arrow-key-scrolling-in-users-browser
-            //To disable browser scrolling which interferes with keyboard arrow keys 
-            keyevent.preventDefault();
-        }
-        this.model.positionPiece(this.piece);
-
-        this.view.displayBoard(ROW_OFFSET, this.model.getBoard(), gameContext);
     };
 
     TetrisGame.prototype.updateGameSpeed = function() {
