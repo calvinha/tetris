@@ -3,7 +3,7 @@
 
 */
 
-//I used this source for gamesteptime speed and  increment functions to
+//I used this source for gamesteptime speed and increment functions to
 //calculate when to increase the drop speed of a tetris piece
 //http://www.smashinglabs.pl/3d-tetris-with-three-js-tutorial-part-1
 
