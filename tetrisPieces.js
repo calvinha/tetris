@@ -399,6 +399,8 @@ function TetrisPiece (colorIndex,  x , y){
         return this.pointsArray.length;
     };
 
+
+
 };
 
 
@@ -413,9 +415,7 @@ function Z_PIECE (){
                    [0,1,1]];    
     Z_PIECE.prototype.toString = function(){
         return "Z Piece";
-    };
-
-    
+    };   
 };
 
 I_PIECE.prototype = new TetrisPiece(1, 1, 0);
@@ -513,6 +513,7 @@ function O_PIECE(){
     };
 };
 
+
 U_PIECE.prototype = new TetrisPiece(6, 0, 2);
 
 function U_PIECE(){
@@ -520,9 +521,6 @@ function U_PIECE(){
                   [1,0,1],
                   [1,1,0]];
 };
-
-
-
 
 
 

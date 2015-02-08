@@ -4,6 +4,7 @@
 
 
 var shift = false;
+var definedCreatePiece = false;
 var gameCanvas = document.getElementById("gameCanvas");
 var gameContext = this.gameCanvas.getContext("2d");
 var CANVAS_WIDTH = gameCanvas.width;
@@ -103,7 +104,7 @@ function TetrisGame(){
     this.score = 0; 
 
     this.PIECES = [ new I_PIECE(), new Z_PIECE(),  new I_PIECE(), new S_PIECE(), new T_PIECE(), new J_PIECE(), new L_PIECE(), new O_PIECE(), new DOT_PIECE()];
-
+    //this.PIECES = [];
 
     //For the tetris preview piece 
     this.nextPieceCanvas = document.getElementById("nextPiece");
@@ -113,8 +114,8 @@ function TetrisGame(){
     
     this.model = new TetrisBoard();
     this.view = new BoardView(this.model, CANVAS_WIDTH, CANVAS_HEIGHT);
-    this.piece = this.PIECES[Math.floor(Math.random()*this.PIECES.length)];
-    this.nextPiece = this.PIECES[Math.floor(Math.random()*this.PIECES.length)];
+//    this.piece = this.PIECES[Math.floor(Math.random()*this.PIECES.length)];
+//    this.nextPiece = this.PIECES[Math.floor(Math.random()*this.PIECES.length)];
     
 
     TetrisGame.prototype.setUpPiece = function(piece, nextPiece){
@@ -315,10 +316,23 @@ function TetrisGame(){
         document.getElementById("lines").innerHTML = "Lines:"+ this.addSpaces(this.totalLinesCleared) + this.totalLinesCleared;
     };
 
-
+    TetrisGame.prototype.addUserPiece = function(userpiece){
+        this.PIECES.push(userpiece);
+    };
 
     TetrisGame.prototype.startGame = function(){
         gameContext.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        //baddd
+        if(definedCreatePiece){
+            var user_piece = createUserPiece();
+            this.PIECES.push(user_piece)
+            this.piece = user_piece;
+        }
+        else{
+            this.piece = this.getNewPiece();
+        }
+        this.nextPiece = this.getNewPiece();        
         this.setUpPiece(this.piece, this.nextPiece);
         this.view.displayBoard(0, this.model.getMiniBoard(), this.nextCtx);
         this.run();
@@ -332,8 +346,7 @@ function Button( x, y, w, h, radius, text, xCoord, yCoord){
     this.y = y;
     this.w = w;
     this.h = h;
-    this.xCoord = xCoord;
-    this.yCoord = yCoord;
+    this.arrayPosition = new Point(xCoord, yCoord);
     this.radius = radius;
     this.text = text;
     this.clicked = false;
@@ -428,23 +441,13 @@ function Button( x, y, w, h, radius, text, xCoord, yCoord){
 
     };
 
-    Button.prototype.changeColor = function(){
-        if(this.clicked)
-            this.DEFAULT_COLOR = this.HOVER_COLOR;
+    Button.prototype.getPosition = function(){
+        return this.arrayPosition;
     };
 
-    Button.prototype.getXCoord = function(){
-        return this.xCoord;
+    Button.prototype.changeY = function(newY){
+        this.y = newY;
     };
-
-    Button.prototype.getYCoord = function(){
-        return this.yCoord;
-    };
-
-    Button.prototype.getClicked = function(){
-        return this.clicked;
-    };
-    
 };
 
 
@@ -540,6 +543,11 @@ function TetrisMenuScreen (){
             x = startX;
             y = y + h + this.PIECES_OFFSET;
         }
+        
+        this.startButton.changeY(y + h);
+        this.startButton.draw();
+        this.pieceButtons.push(this.startButton);
+        
     };
 
     TetrisMenuScreen.prototype.getPieceButtons = function(){
@@ -578,8 +586,116 @@ function updateListeners(identifier){
     
     //Clear the screen
     gameContext.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT)
+}
 
+function getStartingButtonRowIndex(buttonArray){
+    
+    for(var i = 0; i < buttonArray.length; i++ ){
+        for (var j = 0; j < buttonArray[0].length; j++){
+            var button = buttonArray[i][j];
+            if(button.isClicked())
+                return i;
+        }
+    }  
+    return 0;
+}
 
+function createUserPiece(){
+    
+    var pieceArray =  [[0,0,0],
+                       [0,0,0],
+                       [0,0,0]
+                      ];
+    
+    
+    var userPieceArray = menuscreen.getPieceButtons();
+    var buttonArray = [];
+
+    var k = 0;
+    
+    //makes the buttonArray a 2D array for better readability 
+    for(var i = 0; i < pieceArray.length; i++ ){
+        var rowButton = [];
+        for (var j = 0; j < pieceArray[0].length; j++){
+            rowButton.push(userPieceArray[k]);
+            k++;
+        }
+        buttonArray.push(rowButton);
+    } 
+
+    var rowStart = getStartingButtonRowIndex(buttonArray);
+    var end = rowStart;
+    
+    for(var i = 0; i < buttonArray.length - end; i++){
+        for(var j = 0; j < buttonArray[0].length; j++){
+            pieceArray[i][j] = buttonArray[rowStart][j].isClicked() ? 1 : 0;
+        }
+        rowStart++;
+    }
+
+    userPivot = generatePivot(pieceArray);    
+    
+    function USER_PIECE(){
+
+        this.piece = [[0,0,0],
+                      [0,0,0],
+                      [0,0,0]
+                     ];
+
+        //No shallow copying 
+        for(var i = 0; i < pieceArray.length; i++ ){
+            for (var j = 0; j < pieceArray[0].length; j++){
+                this.piece[i][j] = pieceArray[i][j];
+            }
+        }
+    };   
+    USER_PIECE.prototype = new TetrisPiece(6, userPivot.getX(), userPivot.getY());
+    return new USER_PIECE();        
+};
+
+//Finds a suitable pivot for the user Tetris piece
+function generatePivot(buttonArray){
+
+    var value = buttonArray.length;
+    var centerIndex = Math.floor(value/2); //1
+    
+    var centerPoint = buttonArray[centerIndex][centerIndex];
+    var leftMiddle = buttonArray[centerIndex][0];
+    var topMiddle = buttonArray[0][centerIndex];
+    var rightMiddle = buttonArray[centerIndex][value-1];
+    var bottomMiddle = buttonArray[value-1][centerIndex];
+
+    var leftTdiagonal = buttonArray[0][0];
+    var rightTdiagonal = buttonArray[0][value-1];
+    var rightBdiagonal = buttonArray[value-1][value-1];
+    var leftBdiagonal = buttonArray[value-1][0];
+
+    //Sets the pivot to be the center
+    if(centerPoint == 1)
+        return new Point(centerIndex, centerIndex);
+    else if(leftMiddle == 1){
+        return new Point(centerIndex, 0);
+    }
+    else if(topMiddle  == 1){
+        return new Point(0, centerIndex);
+    }
+    else if(rightMiddle  == 1){
+        return new Point(centerIndex, value - 1);
+    }
+    else if(bottomMiddle  == 1){
+        return new Point(value -1, centerIndex);
+    }
+    else if(leftTdiagonal  == 1){
+        return new Point(0, 0);
+    }
+    else if(rightTdiagonal  == 1){
+        return new Point(0, value-1);
+    }
+    else if(rightBdiagonal  == 1){
+        return new Point(value-1, value -1);
+    }
+    else
+        return new Point(value - 1, 0);
 }
 
 function setupGame(){
@@ -588,6 +704,7 @@ function setupGame(){
     
     var tg = new TetrisGame();
     tg.setScoreBoard();
+//    tg.addUserPiece(createUserPiece());
     tg.startGame();
     
     /*Looks for user arrow key inputs*/
@@ -613,6 +730,7 @@ function setupGame(){
         case SHIFT:
             piece.dropPiece(board); shift = true; break;
         }
+        
         //http://stackoverflow.com/questions/8916620/disable-arrow-key-scrolling-in-users-browser
         //To disable browser scrolling which interferes with keyboard arrow keys 
         keyevent.preventDefault();
@@ -623,15 +741,13 @@ function setupGame(){
     //Add the keyListener for keyboard input
     document.addEventListener('keydown', keyListener);
     //tg.run();
-
 };
 
 
 function setUpPiece(){
-
+    definedCreatePiece = true;
     updateListeners("Create Piece");
     menuscreen.createPieces();
-
     isMenu = false;
     gameCanvas.addEventListener("mousemove", checkMousePosition, false);
     
@@ -674,7 +790,7 @@ function checkMousePosition(e){
                 gameCanvas.removeEventListener("click", setupGame, false);
             }
             else if(myButton.isCreatePieceButton()){
-                gameCanvas.removeEventListener("click", setUpPiece, false);
+               gameCanvas.removeEventListener("click", setUpPiece, false);
             }
             myButton.changeHover(false);    
         }
@@ -689,16 +805,10 @@ function checkMousePosition(e){
 };
 
 function checkMouseClick(e){
-    var rect = gameCanvas.getBoundingClientRect();
-    
-    //http://stackoverflow.com/questions/17130395/canvas-html5-real-mouse-position
-    //Get the x and y positions of the mouse on the Canvas with the offset to webpage
+    var rect = gameCanvas.getBoundingClientRect();            
     var x = e.clientX - rect.left;
-    var y = e.clientY - rect.top;
-
-    
+    var y = e.clientY - rect.top;    
     var buttonsArray = menuscreen.getPieceButtons();;
-    var buttonHover ;
     
     for(var i = 0; i < buttonsArray.length; i++){
         var myButton = buttonsArray[i];
@@ -713,6 +823,5 @@ function checkMouseClick(e){
 };
 
                 
-
 gameCanvas.addEventListener("mousemove", checkMousePosition, false);
 gameCanvas.addEventListener("click", checkMouseClick, false);
