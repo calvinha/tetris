@@ -312,8 +312,11 @@ function TetrisPiece (colorIndex,  x , y){
     };
 
     //Sets the start position for any tetris piece so it starts in the "middle"
-    TetrisPiece.prototype.setStartPosition = function(offset){
+    TetrisPiece.prototype.setStartPosition = function(){
 
+        //sets how much the piece will be "invisible" before actually appearing
+        var verticalOffset = 1; 
+        
         var columnLength = this.piece[0].length;
         
         if(columnLength == undefined){
@@ -321,19 +324,15 @@ function TetrisPiece (colorIndex,  x , y){
         }
         
         var shiftRight = Math.floor( (Math.abs ( (COLUMNS) - columnLength) /2) );
-        
-        if(this.toString() == "I Piece"){
-            offset = 1;
-        }
-        
+                
         for (var i = 0; i < this.pointsArray.length; i++){
             var point = this.pointsArray[i]; //shallow copy;
             point.addRight(shiftRight);
-            point.addDown(offset);
+            point.addDown(verticalOffset);
         }
         if(this.pivot != undefined){ // the O_Piece does not have a pivot
             this.pivot.addRight(shiftRight);
-            this.pivot.addDown(offset);
+            this.pivot.addDown(verticalOffset);
         }
     };
 
