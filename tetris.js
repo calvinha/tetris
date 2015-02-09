@@ -77,9 +77,6 @@ function BoardView(model, canvasWidth, canvasHeight){
 
 
 
-
-
-
 function TetrisGame(){
     this.GAMESPEED_INCREMENT = 45;
     this.LINES_PER_LEVEL = 3;
@@ -89,7 +86,7 @@ function TetrisGame(){
 
 
     //To calculate the gametime to update the score, amount of lines cleared and 
-    this.gameStepTime = 450;
+    this.gameStepTime = 425;  
     this.cumulatedTime = 0;
     this.frameTime = 0;
     this.lastFrameTime = Date.now();
@@ -121,7 +118,7 @@ function TetrisGame(){
         piece.resetPiece();
         nextPiece.resetPiece();
         nextPiece.setDisplayPiece(this.model.getMiniBoard());
-        piece.setStartPosition(ROW_OFFSET);
+        piece.setStartPosition();
         this.model.positionPiece(piece);
         this.view.displayBoard(ROW_OFFSET, this.model.getBoard(), gameContext);
 
@@ -130,18 +127,6 @@ function TetrisGame(){
     TetrisGame.prototype.getNewPiece = function(){
         return this.PIECES[Math.floor(Math.random()*this.PIECES.length)];
     };
-
-
-    // //ALERT Be cafeful right here
-    // TetrisGame.prototype.setUpPiece = function(piece, nextPiece){
-    //     piece.resetPiece();
-    //     nextPiece.resetPiece();
-    //     nextPiece.setDisplayPiece(this.model.getMiniBoard());
-    //     piece.setStartPosition(ROW_OFFSET);
-    //     model.positionPiece(piece);
-    //     this.view.displayBoard(ROW_OFFSET, this.model.getBoard(), gameContext);
-
-    // };
 
 
     TetrisGame.prototype.swapPieces = function(){
@@ -222,8 +207,8 @@ function TetrisGame(){
                 this.view.displayBoard(ROW_OFFSET, this.model.getBoard(), gameContext);
                 
                 if(this.model.isGameOver()){
-                    this.gameover=true;
-                    break;
+                    this.gameover=true;                    
+//                    break;
                 }
                 else if(shift ||  (this.count % 2 == 0 && this.count != 0) || this.cleared){
                     this.updateGameSpeed();
@@ -294,6 +279,7 @@ function TetrisGame(){
         //baddd
         if(definedCreatePiece){
             var user_piece = createUserPiece();
+            gameCanvas.removeEventListener("click", checkMouseClick, false);
             this.PIECES.push(user_piece)
             this.piece = user_piece;
         }
@@ -378,12 +364,7 @@ function Button( x, y, w, h, radius, text, xCoord, yCoord){
     };
 
     Button.prototype.changeHover = function(hover){
-        // if(this.clicked){
-        //     this.isHovering = !this.isHovering;
-        // }
-        // else
-        this.isHovering = hover;
-        
+        this.isHovering = hover;        
     };
 
     Button.prototype.isStartButton = function(){
@@ -522,8 +503,6 @@ function TetrisMenuScreen (){
         return this.pieceButtons;
     }
     
-
-
     this.defineButtons();
     this.startButton.draw();
     this.createPieceButton.draw();
@@ -531,10 +510,7 @@ function TetrisMenuScreen (){
 };
 
 var menuscreen = new TetrisMenuScreen();
-//var buttonsArray = menuscreen.getMenuButtons();
 var isMenu = true;
-
-
 
 function updateListeners(identifier){
     
@@ -548,7 +524,7 @@ function updateListeners(identifier){
     if(identifier == "Start Game")
         gameCanvas.removeEventListener("click", setupGame, false);
     else if(identifier = "Create Piece")
-        gameCanvas.removeEventListener("click", setUpPiece, false);
+        gameCanvas.removeEventListener("click", setUpUserPiece, false);
     else
         gameCanvas.removeEventListener("click", checkPieces, false);
     
@@ -672,12 +648,12 @@ function setupGame(){
     
     var tg = new TetrisGame();
     tg.setScoreBoard();
-//    tg.addUserPiece(createUserPiece());
     tg.startGame();
     
     /*Looks for user arrow key inputs*/
     
     function keyListener(keyevent){
+
 
         var model = tg.getModel();
         var piece = tg.getPiece();
@@ -707,12 +683,11 @@ function setupGame(){
     };
 
     //Add the keyListener for keyboard input
-    document.addEventListener('keydown', keyListener);
-    //tg.run();
+    document.addEventListener('keydown', keyListener);    
 };
 
 
-function setUpPiece(){
+function setUpUserPiece(){
     definedCreatePiece = true;
     updateListeners("Create Piece");
     menuscreen.createPieces();
@@ -749,7 +724,7 @@ function checkMousePosition(e){
             if(myButton.isStartButton())
                 gameCanvas.addEventListener("click", setupGame, false);
             else if(myButton.isCreatePieceButton() ){
-                gameCanvas.addEventListener("click", setUpPiece, false);
+                gameCanvas.addEventListener("click", setUpUserPiece, false);
             }
             cursorIsIn = true;
         }
@@ -758,7 +733,7 @@ function checkMousePosition(e){
                 gameCanvas.removeEventListener("click", setupGame, false);
             }
             else if(myButton.isCreatePieceButton()){
-               gameCanvas.removeEventListener("click", setUpPiece, false);
+               gameCanvas.removeEventListener("click", setUpUserPiece, false);
             }
             myButton.changeHover(false);    
         }
